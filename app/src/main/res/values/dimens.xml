@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="text_size">22sp</dimen>
-    <dimen name="settings_text_size">16sp</dimen>
+    <dimen name="head_text_size">22sp</dimen>
+    <dimen name="text_size">16sp</dimen>
     <dimen name="padding">16dp</dimen>
+    <dimen name="zero">0dp</dimen>
     <dimen name="corner_radius">16dp</dimen>
     <dimen name="head_padding">14dp</dimen>
     <dimen name="setting_height">61dp</dimen>
-    <dimen name="margin_from_header">40dp</dimen>
+    <dimen name="margin_from_header">24dp</dimen>
+    <dimen name="standard_square">48dp</dimen>
+    <dimen name="head_height">56dp</dimen>
+    <dimen name="search_linear_layout_height">52dp</dimen>
+    <dimen name="search_corner_radius">8dp</dimen>
 </resources>
