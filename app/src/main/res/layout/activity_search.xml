@@ -39,9 +39,9 @@
         android:gravity="center"
         >
         <ImageView
-            android:layout_width="@dimen/padding"
-            android:layout_height="@dimen/padding"
-            android:src="@drawable/search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/search_icon"
             android:layout_marginStart="12dp"
             />
 
@@ -66,7 +66,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/clear_text"
-            android:src="@drawable/baseline_clear_24"
+            android:src="@drawable/clear_search"
             android:layout_marginEnd="6dp"
             android:visibility="gone"/>
 

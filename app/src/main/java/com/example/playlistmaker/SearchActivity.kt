@@ -52,7 +52,11 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString("savedText", savedText)
+        outState.putString(SAVED_TEXT, savedText)
+    }
+
+    companion object{
+        const val SAVED_TEXT = "SAVED_TEXT"
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
