@@ -2,6 +2,7 @@
 <resources>
     <dimen name="head_text_size">22sp</dimen>
     <dimen name="text_size">16sp</dimen>
+    <dimen name="small_text_size">11sp</dimen>
     <dimen name="padding">16dp</dimen>
     <dimen name="zero">0dp</dimen>
     <dimen name="corner_radius">16dp</dimen>
@@ -12,4 +13,15 @@
     <dimen name="head_height">56dp</dimen>
     <dimen name="search_linear_layout_height">52dp</dimen>
     <dimen name="search_corner_radius">8dp</dimen>
+
+    <dimen name="track_image_corner_radius">2dp</dimen>
+    <dimen name="track_image_margin_start">13dp</dimen>
+    <dimen name="track_image_margin_vertical">8dp</dimen>
+    <dimen name="track_image_size">45dp</dimen>
+    <dimen name="track_text_margin_vertical">14dp</dimen>
+    <dimen name="track_text_margin_horizontal">8dp</dimen>
+    <dimen name="track_icon_margin_end">19dp</dimen>
+    <dimen name="track_icon_size">24dp</dimen>
+
+
 </resources>
