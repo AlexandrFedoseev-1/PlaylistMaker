@@ -109,26 +109,49 @@
 
         <Button
             android:id="@+id/update_button"
-            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-            android:layout_width="91dp"
-            android:layout_height="36dp"
+            style="@style/SearchActivityButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:backgroundTint="?attr/colorOnPrimary"
+            android:text="@string/update_button" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/search_history"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="26dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone"
+        >
+
+        <TextView
+            android:id="@+id/search_history_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/search_history_head"
+            android:textSize="@dimen/placeholder_text_size"
             android:fontFamily="@font/ys_display_medium"
-            android:insetTop="@dimen/zero"
-            android:insetBottom="@dimen/zero"
-            android:maxLines="1"
-            android:text="Обновить"
-            android:textAllCaps="false"
-            android:textColor="?attr/colorPrimary"
-            android:textSize="@dimen/placeholder_button_text_size"
-            app:cornerRadius="54dp"
-            android:paddingStart="6dp"
-            android:paddingEnd="6dp"
-            android:paddingTop="6dp"
-            android:paddingBottom="8dp"/>
+            android:gravity="center"
+            android:textColor="?attr/colorOnPrimary"/>
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/history_search_list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="20dp"
+            />
 
+        <Button
+            android:id="@+id/clear_search_history"
+            style="@style/SearchActivityButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/clear_history_button"
+            />
     </LinearLayout>
 
 </LinearLayout>
