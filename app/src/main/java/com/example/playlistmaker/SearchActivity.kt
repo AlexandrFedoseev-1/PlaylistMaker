@@ -1,6 +1,7 @@
 package com.example.playlistmaker
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -13,7 +14,6 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,11 +26,12 @@ import retrofit2.converter.gson.GsonConverterFactory
 class SearchActivity : AppCompatActivity() {
     private var savedText: String? = null
     private val trackBaseUrl = BASE_URL
-    private val retrofit = Retrofit.Builder().baseUrl(trackBaseUrl)
-        .addConverterFactory(GsonConverterFactory.create()).build()
-
+    private val retrofit =
+        Retrofit.Builder().baseUrl(trackBaseUrl).addConverterFactory(GsonConverterFactory.create())
+            .build()
     private val trackService = retrofit.create(TrackSearchApi::class.java)
     private val trackList = ArrayList<Track>()
+
 
     private lateinit var placeholderMessage: LinearLayout
     private lateinit var backButton: ImageView
@@ -40,24 +41,54 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var searchRecyclerView: RecyclerView
     private lateinit var updateButton: Button
     private lateinit var placeholderText: TextView
+    private lateinit var searchAdapter: SearchAdapter
 
-
-    private val searchAdapter = SearchAdapter(trackList)
+    private lateinit var trackSearchHistoryList: ArrayList<Track>
+    private lateinit var sharedPref: SharedPreferences
+    private lateinit var searchHistoryRecyclerView: RecyclerView
+    private lateinit var searchHistoryLayout: LinearLayout
+    private lateinit var clearHistoryButton: Button
+    private lateinit var searchHistoryManager: SearchHistoryManager
+    private lateinit var historyAdapter: SearchAdapter
+    private lateinit var sharedPrefChangeListener: SharedPreferences.OnSharedPreferenceChangeListener
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_search)
+
+        sharedPref = getSharedPreferences(SEARCH_HISTORY_PREFERENCES, MODE_PRIVATE)
+        searchHistoryManager = SearchHistoryManager(sharedPref)
+
         backButton = findViewById(R.id.back_button)
         searchEditText = findViewById(R.id.search)
         clearButton = findViewById(R.id.clear_text)
+
+
         placeholderImage = findViewById(R.id.placeholder_image)
         placeholderMessage = findViewById(R.id.placeholder)
         searchRecyclerView = findViewById(R.id.search_list)
         updateButton = findViewById(R.id.update_button)
         placeholderText = findViewById(R.id.placeholder_text)
+        searchAdapter =
+            SearchAdapter(trackList) { track ->
+                searchHistoryManager.addTrackToHistory(track)
+            }
         searchRecyclerView.layoutManager = LinearLayoutManager(this)
         searchRecyclerView.adapter = searchAdapter
+
+
+        searchHistoryLayout = findViewById(R.id.search_history)
+        searchHistoryRecyclerView = findViewById(R.id.history_search_list)
+        clearHistoryButton = findViewById(R.id.clear_search_history)
+        trackSearchHistoryList = searchHistoryManager.getSearchHistory()
+        historyAdapter =
+            SearchAdapter(trackSearchHistoryList) { track ->
+                searchHistoryManager.addTrackToHistory(track)
+            }
+        searchHistoryRecyclerView.layoutManager = LinearLayoutManager(this)
+        searchHistoryRecyclerView.adapter = historyAdapter
 
         searchEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -67,12 +98,30 @@ class SearchActivity : AppCompatActivity() {
             false
         }
 
+        searchEditText.setOnFocusChangeListener { view, hasFocus ->
+            searchHistoryLayout.visibility =
+                if (hasFocus && searchEditText.text.isEmpty() && trackSearchHistoryList.isNotEmpty()) View.VISIBLE else View.GONE
+        }
+
+
+        sharedPrefChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
+            trackSearchHistoryList.clear()
+            trackSearchHistoryList.addAll(searchHistoryManager.getSearchHistory())
+            historyAdapter.notifyDataSetChanged()
+        }
+        sharedPref.registerOnSharedPreferenceChangeListener(sharedPrefChangeListener)
+
+
+        clearHistoryButton.setOnClickListener {
+            searchHistoryManager.clearHistory()
+            searchHistoryLayout.visibility = View.GONE
+        }
 
         backButton.setOnClickListener {
             super.finish()
         }
 
-        updateButton.setOnClickListener{
+        updateButton.setOnClickListener {
             trackSearch()
         }
 
@@ -82,7 +131,7 @@ class SearchActivity : AppCompatActivity() {
             imm?.hideSoftInputFromWindow(searchEditText.windowToken, 0)
             trackList.clear()
             searchAdapter.notifyDataSetChanged()
-            placeholderMessage.visibility =View.GONE
+            placeholderMessage.visibility = View.GONE
         }
 
         val searchTextWatcher = object : TextWatcher {
@@ -92,6 +141,8 @@ class SearchActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearButton.visibility = clearButtonVisibility(s)
+                searchHistoryLayout.visibility =
+                    if (searchEditText.hasFocus() && s.isNullOrEmpty() && trackSearchHistoryList.isNotEmpty()) View.VISIBLE else View.GONE
 
             }
 
@@ -105,13 +156,13 @@ class SearchActivity : AppCompatActivity() {
 
 
     }
-    private fun trackSearch(){
+
+    private fun trackSearch() {
         if (searchEditText.text.isNotEmpty()) {
             trackService.search(searchEditText.text.toString())
                 .enqueue(object : Callback<TrackResponse> {
                     override fun onResponse(
-                        call: Call<TrackResponse>,
-                        response: Response<TrackResponse>
+                        call: Call<TrackResponse>, response: Response<TrackResponse>
                     ) {
                         if (response.code() == 200) {
                             trackList.clear()
@@ -121,16 +172,14 @@ class SearchActivity : AppCompatActivity() {
                             }
                             if (trackList.isEmpty()) {
                                 showMessage(
-                                    getString(R.string.placeholder_not_found),
-                                    response.code()
+                                    getString(R.string.placeholder_not_found), response.code()
                                 )
                             } else {
                                 showMessage("", response.code())
                             }
                         } else {
                             showMessage(
-                                getString(R.string.placeholder_error),
-                                response.code()
+                                getString(R.string.placeholder_error), response.code()
                             )
                         }
                     }
@@ -148,21 +197,17 @@ class SearchActivity : AppCompatActivity() {
             trackList.clear()
             searchAdapter.notifyDataSetChanged()
             placeholderText.text = text
-            Toast.makeText(applicationContext, code.toString(), Toast.LENGTH_LONG)
-                .show()
             if (code == 200) {
                 placeholderImage.setImageDrawable(
                     AppCompatResources.getDrawable(
-                        this,
-                        R.drawable.not_found
+                        this, R.drawable.not_found
                     )
                 )
                 updateButton.visibility = View.GONE
             } else {
                 placeholderImage.setImageDrawable(
                     AppCompatResources.getDrawable(
-                        this,
-                        R.drawable.search_error
+                        this, R.drawable.search_error
                     )
                 )
                 updateButton.visibility = View.VISIBLE
@@ -175,6 +220,7 @@ class SearchActivity : AppCompatActivity() {
     companion object {
         const val SAVED_TEXT = "SAVED_TEXT"
         const val BASE_URL = "https://itunes.apple.com"
+        const val SEARCH_HISTORY_PREFERENCES = "search_history"
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
