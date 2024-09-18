@@ -95,7 +95,7 @@ class SearchActivity : AppCompatActivity() {
         sharedPref.registerOnSharedPreferenceChangeListener(sharedPrefChangeListener)
 
 
-        binding.clearText.setOnClickListener {
+        binding.clearSearchHistory.setOnClickListener {
             searchHistoryManager.clearHistory()
             binding.searchHistory.visibility = View.GONE
         }
@@ -231,6 +231,8 @@ class SearchActivity : AppCompatActivity() {
     private fun searchHistoryLayoutVisibility(s: CharSequence?): Int {
         if (binding.search.hasFocus() && s.isNullOrEmpty() && trackSearchHistoryList.isNotEmpty()) {
             binding.placeholder.visibility = View.GONE
+            trackList.clear()
+            searchAdapter.notifyDataSetChanged()
             return View.VISIBLE
         } else {
             return View.GONE
