@@ -15,7 +15,7 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:layout_marginVertical="@dimen/track_text_margin_vertical"
+        android:gravity="center_vertical"
         android:orientation="vertical"
         android:layout_marginHorizontal="@dimen/track_text_margin_horizontal"
         >
