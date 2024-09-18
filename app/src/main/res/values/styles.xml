@@ -23,4 +23,20 @@
         <item name="android:textSize">@dimen/text_size</item>
         <item name="fontFamily">@font/ys_display_regular</item>
     </style>
+    <style name="SearchActivityButtonStyle" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="android:textSize">@dimen/placeholder_button_text_size</item>
+        <item name="android:insetTop">@dimen/zero</item>
+        <item name="android:insetBottom">@dimen/zero</item>
+        <item name="fontFamily">@font/ys_display_medium</item>
+        <item name="backgroundTint">?attr/colorOnPrimary</item>
+        <item name="cornerRadius">54dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:paddingStart">8dp</item>
+        <item name="android:paddingEnd">6dp</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingBottom">6dp</item>
+        <item name="android:minHeight">36dp</item>
+
+    </style>
 </resources>
