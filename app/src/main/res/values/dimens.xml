@@ -5,6 +5,7 @@
     <dimen name="placeholder_button_text_size">14sp</dimen>
     <dimen name="text_size">16sp</dimen>
     <dimen name="small_text_size">11sp</dimen>
+    <dimen name="track_info_text_size">13sp</dimen>
 
     <dimen name="padding">16dp</dimen>
     <dimen name="zero">0dp</dimen>
@@ -16,6 +17,7 @@
     <dimen name="head_height">56dp</dimen>
     <dimen name="search_linear_layout_height">52dp</dimen>
     <dimen name="search_corner_radius">8dp</dimen>
+    <dimen name="album_image_corner_radius">8dp</dimen>
 
     <dimen name="track_image_corner_radius">2dp</dimen>
     <dimen name="track_image_margin_start">13dp</dimen>
@@ -25,6 +27,9 @@
     <dimen name="track_text_margin_horizontal">8dp</dimen>
     <dimen name="track_icon_margin_end">19dp</dimen>
     <dimen name="track_icon_size">24dp</dimen>
+    <dimen name="app_bar_height">180dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
 
 
 </resources>
