@@ -17,5 +17,10 @@
     <string name="placeholder_error">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
     <string name="update_button">Обновить</string>
     <string name="clear_history_button">Очистить историю</string>
+    <string name="text_track_time">Длительность</string>
+    <string name="text_collection_name">Альбом</string>
+    <string name="text_release_date">Год</string>
+    <string name="text_genre_name">Жанр</string>
+    <string name="text_country">Страна</string>
     <string name="search_history_head">Вы искали</string>
 </resources>
