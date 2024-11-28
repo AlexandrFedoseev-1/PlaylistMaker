@@ -5,13 +5,15 @@ import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import retrofit2.Call
@@ -40,6 +42,11 @@ class SearchActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySearchBinding
 
+    private val debouncer = Debouncer(
+        Handler(Looper.getMainLooper())
+    )
+
+    private var currentCall: Call<TrackResponse>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,10 +59,12 @@ class SearchActivity : AppCompatActivity() {
 
         searchAdapter =
             SearchAdapter(trackList) { track ->
-                searchHistoryManager.addTrackToHistory(track)
-                val i = Intent(this,AudioPlayerActivity::class.java)
-                i.putExtra(TRACK,track)
-                startActivity(i)
+                if (debouncer.clickDebounce()) {
+                    searchHistoryManager.addTrackToHistory(track)
+                    val i = Intent(this, AudioPlayerActivity::class.java)
+                    i.putExtra(TRACK, track)
+                    startActivity(i)
+                }
             }
         binding.searchList.layoutManager = LinearLayoutManager(this)
         binding.searchList.adapter = searchAdapter
@@ -65,10 +74,12 @@ class SearchActivity : AppCompatActivity() {
         trackSearchHistoryList = searchHistoryManager.getSearchHistory()
         historyAdapter =
             SearchAdapter(trackSearchHistoryList) { track ->
-                searchHistoryManager.addTrackToHistory(track)
-                val i = Intent(this,AudioPlayerActivity::class.java)
-                i.putExtra(TRACK,track)
-                startActivity(i)
+                if (debouncer.clickDebounce()) {
+                    searchHistoryManager.addTrackToHistory(track)
+                    val i = Intent(this, AudioPlayerActivity::class.java)
+                    i.putExtra(TRACK, track)
+                    startActivity(i)
+                }
             }
         binding.historySearchList.layoutManager = LinearLayoutManager(this)
         binding.historySearchList.adapter = historyAdapter
@@ -82,7 +93,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         binding.search.setOnFocusChangeListener { _, _ ->
-            binding.searchHistory.visibility = searchHistoryLayoutVisibility(binding.search.text)
+            searchHistoryLayoutVisibility(binding.search.text)
         }
 
 
@@ -97,7 +108,7 @@ class SearchActivity : AppCompatActivity() {
 
         binding.clearSearchHistory.setOnClickListener {
             searchHistoryManager.clearHistory()
-            binding.searchHistory.visibility = View.GONE
+            setScreenState(EMPTY)
         }
 
         binding.backButton.setOnClickListener {
@@ -114,7 +125,9 @@ class SearchActivity : AppCompatActivity() {
             imm?.hideSoftInputFromWindow(binding.search.windowToken, 0)
             trackList.clear()
             searchAdapter.notifyDataSetChanged()
-            binding.placeholder.visibility = View.GONE
+            currentCall?.cancel()
+            currentCall = null
+            searchHistoryLayoutVisibility("")
         }
 
         val searchTextWatcher = object : TextWatcher {
@@ -124,7 +137,8 @@ class SearchActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.clearText.visibility = clearButtonVisibility(s)
-                binding.searchHistory.visibility = searchHistoryLayoutVisibility(s)
+                searchHistoryLayoutVisibility(s)
+                debouncer.submit { trackSearch() }
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -140,11 +154,18 @@ class SearchActivity : AppCompatActivity() {
 
     private fun trackSearch() {
         if (binding.search.text.isNotEmpty()) {
-            trackService.search(binding.search.text.toString())
-                .enqueue(object : Callback<TrackResponse> {
-                    override fun onResponse(
-                        call: Call<TrackResponse>, response: Response<TrackResponse>
-                    ) {
+
+            setScreenState(LOADING)
+
+            currentCall?.cancel()
+
+            currentCall = trackService.search(binding.search.text.toString())
+
+            currentCall?.enqueue(object : Callback<TrackResponse> {
+                override fun onResponse(
+                    call: Call<TrackResponse>, response: Response<TrackResponse>
+                ) {
+                    if (!call.isCanceled) {
                         if (response.code() == 200) {
                             trackList.clear()
                             if (response.body()?.results?.isNotEmpty() == true) {
@@ -164,37 +185,31 @@ class SearchActivity : AppCompatActivity() {
                             )
                         }
                     }
+                }
 
-                    override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
+                override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
+                    if (!call.isCanceled)
                         showMessage(getString(R.string.placeholder_error), null)
-                    }
-                })
+                }
+            })
         }
     }
 
     private fun showMessage(text: String, code: Int?) {
         if (text.isNotEmpty()) {
-            binding.placeholder.visibility = View.VISIBLE
+            setScreenState(PLACEHOLDER)
             trackList.clear()
             searchAdapter.notifyDataSetChanged()
             binding.placeholderText.text = text
             if (code == 200) {
-                binding.placeholderImage.setImageDrawable(
-                    AppCompatResources.getDrawable(
-                        this, R.drawable.not_found
-                    )
-                )
-                binding.updateButton.visibility = View.GONE
+                binding.placeholderImage.setImageResource(R.drawable.not_found)
+                binding.updateButton.isVisible = false
             } else {
-                binding.placeholderImage.setImageDrawable(
-                    AppCompatResources.getDrawable(
-                        this, R.drawable.search_error
-                    )
-                )
-                binding.updateButton.visibility = View.VISIBLE
+                binding.placeholderImage.setImageResource(R.drawable.search_error)
+                binding.updateButton.isVisible = true
             }
         } else {
-            binding.placeholder.visibility = View.GONE
+            setScreenState(SEARCH_LIST)
         }
     }
 
@@ -203,8 +218,52 @@ class SearchActivity : AppCompatActivity() {
         const val BASE_URL = "https://itunes.apple.com"
         const val SEARCH_HISTORY_PREFERENCES = "search_history"
         const val TRACK = "TRACK"
-
+        const val EMPTY = 0
+        const val SEARCH_HISTORY = 1
+        const val LOADING = 2
+        const val SEARCH_LIST = 3
+        const val PLACEHOLDER = 4
     }
+
+    private fun setScreenState(state: Int) {
+        when (state) {
+            EMPTY -> {
+                binding.searchHistory.isVisible = false
+                binding.searchList.isVisible = false
+                binding.placeholder.isVisible = false
+                binding.progressBar.isVisible = false
+            }
+
+            SEARCH_HISTORY -> {
+                binding.searchHistory.isVisible = true
+                binding.searchList.isVisible = false
+                binding.placeholder.isVisible = false
+                binding.progressBar.isVisible = false
+            }
+
+            LOADING -> {
+                binding.searchHistory.isVisible = false
+                binding.searchList.isVisible = false
+                binding.placeholder.isVisible = false
+                binding.progressBar.isVisible = true
+            }
+
+            SEARCH_LIST -> {
+                binding.searchHistory.isVisible = false
+                binding.searchList.isVisible = true
+                binding.placeholder.isVisible = false
+                binding.progressBar.isVisible = false
+            }
+
+            PLACEHOLDER -> {
+                binding.searchHistory.isVisible = false
+                binding.searchList.isVisible = false
+                binding.placeholder.isVisible = true
+                binding.progressBar.isVisible = false
+            }
+        }
+    }
+
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -228,14 +287,14 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private fun searchHistoryLayoutVisibility(s: CharSequence?): Int {
+    private fun searchHistoryLayoutVisibility(s: CharSequence?) {
         if (binding.search.hasFocus() && s.isNullOrEmpty() && trackSearchHistoryList.isNotEmpty()) {
-            binding.placeholder.visibility = View.GONE
             trackList.clear()
             searchAdapter.notifyDataSetChanged()
-            return View.VISIBLE
+            setScreenState(SEARCH_HISTORY)
+
         } else {
-            return View.GONE
+            binding.searchHistory.isVisible = false
         }
     }
 
