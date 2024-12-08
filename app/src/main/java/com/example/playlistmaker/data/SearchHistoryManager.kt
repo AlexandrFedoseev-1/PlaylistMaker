@@ -1,11 +1,16 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.data
 
-import android.content.SharedPreferences
+import android.content.Context
+import android.content.Context.MODE_PRIVATE
+import com.example.playlistmaker.domain.models.Track
+
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
 
-class SearchHistoryManager(private val sharedPref: SharedPreferences) {
+class SearchHistoryManager(context: Context) {
+    private val sharedPref = context.getSharedPreferences(SEARCH_HISTORY_PREFERENCES, MODE_PRIVATE)
+
      fun getSearchHistory(): ArrayList<Track> {
         val json = sharedPref.getString(SEARCH_HISTORY_KEY, null)
         if (json != null) {
@@ -15,10 +20,7 @@ class SearchHistoryManager(private val sharedPref: SharedPreferences) {
         return ArrayList()
     }
 
-    fun saveSearchHistory(history: List<Track>) {
-        val json = Gson().toJson(history)
-        sharedPref.edit().putString(SEARCH_HISTORY_KEY, json).apply()
-    }
+
 
     fun addTrackToHistory(track: Track) {
         val history = getSearchHistory().toMutableList()
@@ -34,8 +36,14 @@ class SearchHistoryManager(private val sharedPref: SharedPreferences) {
         sharedPref.edit().remove(SEARCH_HISTORY_KEY).apply()
     }
 
+    private fun saveSearchHistory(history: List<Track>) {
+        val json = Gson().toJson(history)
+        sharedPref.edit().putString(SEARCH_HISTORY_KEY, json).apply()
+    }
+
     companion object {
         private const val SEARCH_HISTORY_KEY = "search_history_key"
         private const val MAX_HISTORY_SIZE = 10
+        const val SEARCH_HISTORY_PREFERENCES = "search_history"
     }
 }
