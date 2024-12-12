@@ -80,9 +80,7 @@ class AudioPlayerActivity : AppCompatActivity() {
             binding.collectionNameGroup.visibility = View.VISIBLE
         }
 
-        binding.backButton.setOnClickListener {
-            super.finish()
-        }
+        binding.toolbar.setNavigationOnClickListener { super.finish() }
     }
 
     override fun onPause() {
