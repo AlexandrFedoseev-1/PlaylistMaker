@@ -3,46 +3,41 @@ package com.example.playlistmaker.ui.settings
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.ImageView
-import android.widget.TextView
 import com.example.playlistmaker.App
 import com.example.playlistmaker.Creator
-import com.example.playlistmaker.R
+import com.example.playlistmaker.databinding.ActivitySettingsBinding
 import com.example.playlistmaker.domain.api.SettingsInteractor
-import com.google.android.material.switchmaterial.SwitchMaterial
+
 
 class SettingsActivity : AppCompatActivity() {
     private lateinit var settingsInteractor: SettingsInteractor
+
+    private lateinit var binding: ActivitySettingsBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
-        val backButton = findViewById<ImageView>(R.id.back_button)
-        val sharedButton = findViewById<TextView>(R.id.share)
-        val supportButton = findViewById<TextView>(R.id.support)
-        val userAgreementButton = findViewById<TextView>(R.id.user_agreement)
-        val themeSwitcher = findViewById<SwitchMaterial>(R.id.theme_switcher)
+        binding = ActivitySettingsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         settingsInteractor = Creator.provideSettingsInteractor()
+        binding.toolbar.setNavigationOnClickListener { super.finish() }
 
-        backButton.setOnClickListener {
-            super.finish()
-        }
 
-        themeSwitcher.isChecked = settingsInteractor.isDarkThemeEnabled()!!
-        themeSwitcher.setOnCheckedChangeListener { _, checked ->
+        binding.themeSwitcher.isChecked = settingsInteractor.isDarkThemeEnabled()!!
+        binding.themeSwitcher.setOnCheckedChangeListener { _, checked ->
             (applicationContext as App).switchTheme(checked)
 
         }
 
-        sharedButton.setOnClickListener {
+        binding.share.setOnClickListener {
             settingsInteractor.shareApp()
         }
 
-        supportButton.setOnClickListener {
+        binding.support.setOnClickListener {
             settingsInteractor.writeToSupport()
         }
 
-        userAgreementButton.setOnClickListener {
+        binding.userAgreement.setOnClickListener {
             settingsInteractor.showUserAgreement()
         }
     }
