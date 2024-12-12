@@ -1,11 +1,11 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.data
 
 import android.media.MediaPlayer
 import com.example.playlistmaker.domain.api.AudioPlayer
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class MediaPlayerImpl(private val mediaPlayer: MediaPlayer) : AudioPlayer {
+class MediaPlayerRepositoryImpl(private val mediaPlayer: MediaPlayer) : AudioPlayer {
 
     override fun prepare(previewUrl: String, onPrepared: () -> Unit, onCompletion: () -> Unit) {
         mediaPlayer.apply {
