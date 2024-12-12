@@ -2,25 +2,25 @@ package com.example.playlistmaker.data
 
 import com.example.playlistmaker.domain.api.SettingsRepository
 
-class SettingsRepositoryImpl(private val settingsManager: SettingsManager): SettingsRepository {
+class SettingsRepositoryImpl(private val settingsLocalDataSource: SettingsLocalDataSource): SettingsRepository {
 
     override fun isDarkThemeEnabled(): Boolean? {
-        return settingsManager.isDarkThemeEnabled()
+        return settingsLocalDataSource.isDarkThemeEnabled()
     }
 
     override fun saveTheme(darkThemeEnabled: Boolean) {
-        settingsManager.saveTheme(darkThemeEnabled)
+        settingsLocalDataSource.saveTheme(darkThemeEnabled)
     }
 
     override fun shareApp() {
-        settingsManager.shareApp()
+        settingsLocalDataSource.shareApp()
     }
 
     override fun writeToSupport() {
-        settingsManager.writeToSupport()
+        settingsLocalDataSource.writeToSupport()
     }
 
     override fun showUserAgreement() {
-        settingsManager.showUserAgreement()
+        settingsLocalDataSource.showUserAgreement()
     }
 }

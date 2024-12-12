@@ -6,7 +6,7 @@ import android.net.Uri
 import com.example.playlistmaker.App
 import com.example.playlistmaker.R
 
-class SettingsManager(private val context: Context) {
+class SettingsLocalDataSource(private val context: Context) {
     private val sharedPref = context.getSharedPreferences(App.SETTING_PREFERENCES, Context.MODE_PRIVATE)
     fun isDarkThemeEnabled(): Boolean? {
         val theme = sharedPref.getString(App.DARK_THEME, null)

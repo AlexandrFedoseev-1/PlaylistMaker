@@ -2,7 +2,7 @@ package com.example.playlistmaker.data.network
 
 import android.icu.text.SimpleDateFormat
 import com.example.playlistmaker.data.NetworkClient
-import com.example.playlistmaker.data.SearchHistoryManager
+import com.example.playlistmaker.data.SearchHistoryLocalDataSource
 import com.example.playlistmaker.data.dto.TrackRequest
 import com.example.playlistmaker.data.dto.TrackResponse
 import com.example.playlistmaker.domain.api.TracksRepository
@@ -12,7 +12,7 @@ import java.util.Locale
 
 class TracksRepositoryImpl(
     private val networkClient: NetworkClient,
-    private val searchHistoryManager: SearchHistoryManager
+    private val searchHistoryLocalDataSource: SearchHistoryLocalDataSource
 ) : TracksRepository {
     override fun getSearchTracks(exception: String): Resource<List<Track>> {
         val response = networkClient.doRequest(TrackRequest(exception))
@@ -38,14 +38,14 @@ class TracksRepositoryImpl(
     }
 
     override fun getSearchHistory(): ArrayList<Track> {
-        return searchHistoryManager.getSearchHistory()
+        return searchHistoryLocalDataSource.getSearchHistory()
     }
 
     override fun addTrackToHistory(track: Track) {
-        searchHistoryManager.addTrackToHistory(track)
+        searchHistoryLocalDataSource.addTrackToHistory(track)
     }
 
     override fun clearHistory() {
-        searchHistoryManager.clearHistory()
+        searchHistoryLocalDataSource.clearHistory()
     }
 }

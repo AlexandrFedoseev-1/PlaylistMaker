@@ -1,15 +1,15 @@
 package com.example.playlistmaker.data
 
-import android.content.Context
-import android.content.Context.MODE_PRIVATE
+
+import android.content.SharedPreferences
 import com.example.playlistmaker.domain.models.Track
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
 
-class SearchHistoryManager(context: Context) {
-    private val sharedPref = context.getSharedPreferences(SEARCH_HISTORY_PREFERENCES, MODE_PRIVATE)
+class SearchHistoryLocalDataSource(private val sharedPref: SharedPreferences) {
+
 
      fun getSearchHistory(): ArrayList<Track> {
         val json = sharedPref.getString(SEARCH_HISTORY_KEY, null)
