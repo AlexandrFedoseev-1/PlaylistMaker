@@ -3,15 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tool="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <ImageView
-        android:id="@+id/back_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/arrow_back"
+    android:layout_height="match_parent"
+    android:background="?attr/colorPrimary"
+    >
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        style="@style/ToolbarStyle"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/left_border_album"
@@ -50,7 +49,7 @@
         app:layout_constraintDimensionRatio="h,1:1"
         app:layout_constraintEnd_toStartOf="@id/right_border_album"
         app:layout_constraintStart_toStartOf="@id/left_border_album"
-        app:layout_constraintTop_toBottomOf="@id/back_button"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:layout_constraintVertical_chainStyle="packed"
         app:layout_constraintVertical_bias="0"/>
 
