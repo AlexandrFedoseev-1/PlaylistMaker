@@ -29,12 +29,16 @@ class SearchActivity : AppCompatActivity() {
     private val trackList = ArrayList<Track>()
 
     private lateinit var tracksInteractor : TracksInteractor
-    private lateinit var searchAdapter: SearchAdapter
+    private val searchAdapter: SearchAdapter by lazy {
+        setupAdapter(trackList)
+    }
+
 
     private lateinit var trackSearchHistoryList: ArrayList<Track>
 
-
-    private lateinit var historyAdapter: SearchAdapter
+    private val historyAdapter: SearchAdapter by lazy {
+        setupAdapter(trackSearchHistoryList)
+    }
 
 
     private lateinit var binding: ActivitySearchBinding
@@ -50,16 +54,13 @@ class SearchActivity : AppCompatActivity() {
         setContentView(binding.root)
         tracksInteractor = Creator.provideTracksInteractor()
 
-        searchAdapter = setupAdapter(trackList)
-        binding.searchList.layoutManager = LinearLayoutManager(this)
+
         binding.searchList.adapter = searchAdapter
 
 
 
         trackSearchHistoryList = tracksInteractor.getSearchHistory()
-        historyAdapter = setupAdapter(trackSearchHistoryList)
 
-        binding.historySearchList.layoutManager = LinearLayoutManager(this)
         binding.historySearchList.adapter = historyAdapter
 
         binding.search.setOnEditorActionListener { _, actionId, _ ->
@@ -82,9 +83,7 @@ class SearchActivity : AppCompatActivity() {
             setScreenState(ScreenState.EMPTY)
         }
 
-        binding.backButton.setOnClickListener {
-            super.finish()
-        }
+        binding.toolbar.setNavigationOnClickListener { super.finish() }
 
         binding.updateButton.setOnClickListener {
             trackSearch()
@@ -105,7 +104,7 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                binding.clearText.visibility = clearButtonVisibility(s)
+                binding.clearText.isVisible = !s.isNullOrEmpty()
                 searchHistoryLayoutVisibility(s)
                 debouncer.submit { trackSearch() }
             }
@@ -140,40 +139,43 @@ class SearchActivity : AppCompatActivity() {
 
 
     private fun trackSearch() {
-        if (binding.search.text.isNotEmpty()) {
+        val query = binding.search.text.toString()
+        if (query.isNotEmpty()) {
             setScreenState(ScreenState.LOADING)
-            debouncer.submit {
-                tracksInteractor.searchTracks(
-                    binding.search.text.toString(),
-                    object : Consumer<List<Track>> {
-                        override fun consume(data: ConsumerData<List<Track>>) {
-                            runOnUiThread {
-                                when (data) {
-                                    is ConsumerData.Data -> {
-                                        if (data.value.isNotEmpty()) {
-                                            trackList.clear()
-                                            trackList.addAll(data.value)
-                                            searchAdapter.notifyDataSetChanged()
-                                            showMessage(FOUND_SUCCESS)
-                                        } else {
-                                            showMessage(NOT_FOUND)
-                                        }
-                                    }
-
-                                    is ConsumerData.Error -> {
-                                        showMessage(NO_INTERNET)
-                                    }
-                                }
-                            }
-                        }
-
-                    }
-                )
-
-            }
+            debouncer.submit { performTrackSearch(query) }
         } else {
             debouncer.cancel()
         }
+    }
+
+    private fun performTrackSearch(query: String) {
+        tracksInteractor.searchTracks(query, object : Consumer<List<Track>> {
+            override fun consume(data: ConsumerData<List<Track>>) {
+                runOnUiThread { handleSearchResult(data) }
+            }
+        })
+    }
+
+    private fun handleSearchResult(data: ConsumerData<List<Track>>) {
+        when (data) {
+            is ConsumerData.Data -> handleSearchSuccess(data.value)
+            is ConsumerData.Error -> showMessage(NO_INTERNET)
+        }
+    }
+
+    private fun handleSearchSuccess(tracks: List<Track>) {
+        if (tracks.isNotEmpty()) {
+            updateTrackList(tracks)
+            showMessage(FOUND_SUCCESS)
+        } else {
+            showMessage(NOT_FOUND)
+        }
+    }
+
+    private fun updateTrackList(tracks: List<Track>) {
+        trackList.clear()
+        trackList.addAll(tracks)
+        searchAdapter.notifyDataSetChanged()
     }
 
     private fun showMessage(massage: String) {
@@ -227,13 +229,6 @@ class SearchActivity : AppCompatActivity() {
     }
 
 
-    private fun clearButtonVisibility(s: CharSequence?): Int {
-        return if (s.isNullOrEmpty()) {
-            View.GONE
-        } else {
-            View.VISIBLE
-        }
-    }
 
     private fun searchHistoryLayoutVisibility(s: CharSequence?) {
         if (binding.search.hasFocus() && s.isNullOrEmpty() && trackSearchHistoryList.isNotEmpty()) {
