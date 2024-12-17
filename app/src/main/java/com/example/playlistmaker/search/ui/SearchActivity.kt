@@ -22,8 +22,8 @@ class SearchActivity : AppCompatActivity() {
     private var savedText: String? = null
     private lateinit var viewModel: SearchViewModel
 
-    private val searchAdapter by lazy { SearchAdapter(arrayListOf(), ::onTrackClick) }
-    private val historyAdapter by lazy { SearchAdapter(arrayListOf(), ::onTrackClick) }
+    private val searchAdapter by lazy { SearchAdapter(onTrackClick = ::onTrackClick) }
+    private val historyAdapter by lazy { SearchAdapter(onTrackClick = ::onTrackClick) }
 
 
     private lateinit var binding: ActivitySearchBinding

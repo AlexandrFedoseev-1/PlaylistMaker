@@ -10,6 +10,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.example.playlistmaker.search.domain.models.Track
+
 class AudioPlayerActivity : AppCompatActivity() {
 
     private lateinit var viewModel: AudioPlayerViewModel
@@ -36,12 +37,30 @@ class AudioPlayerActivity : AppCompatActivity() {
         }
         binding.toolbar.setNavigationOnClickListener { super.finish() }
 
-        viewModel.playerState.observe(this){ state ->
-            updatePlayButton(state)
+        viewModel.playerState.observe(this) { state ->
+            when (state) {
+                is AudioPlayerScreenState.Default -> {
+                    binding.playButton.setBackgroundResource(R.drawable.play_button)
+                    binding.demoPlayTime.text = "00:00"
+                }
+
+                is AudioPlayerScreenState.Prepared -> {
+                    binding.playButton.setBackgroundResource(R.drawable.play_button)
+                }
+
+                is AudioPlayerScreenState.Playing -> {
+                    binding.playButton.setBackgroundResource(R.drawable.pause_button)
+                    binding.demoPlayTime.text = state.currentPosition
+                }
+
+                is AudioPlayerScreenState.Paused -> {
+                    binding.playButton.setBackgroundResource(R.drawable.play_button)
+                    binding.demoPlayTime.text = state.currentPosition
+                }
+            }
+
         }
-        viewModel.currentPosition.observe(this){ time ->
-            binding.demoPlayTime.text = time
-        }
+
     }
 
     override fun onPause() {
@@ -49,25 +68,13 @@ class AudioPlayerActivity : AppCompatActivity() {
         viewModel.pausePlayer()
     }
 
-    private fun updatePlayButton(state: Int) {
-        binding.playButton.setBackgroundResource(
-            if (state == AudioPlayerViewModel.STATE_PLAYING) R.drawable.pause_button
-            else R.drawable.play_button
-        )
-    }
-
     private fun playbackControl() {
         when (viewModel.playerState.value) {
-            AudioPlayerViewModel.STATE_PLAYING -> {
-                viewModel.pausePlayer()
-            }
-
-            AudioPlayerViewModel.STATE_PREPARED, AudioPlayerViewModel.STATE_PAUSED -> {
-                viewModel.startPlayer()
-            }
+            is AudioPlayerScreenState.Playing -> viewModel.pausePlayer()
+            is AudioPlayerScreenState.Prepared, is AudioPlayerScreenState.Paused -> viewModel.startPlayer()
+            else -> Unit
         }
     }
-
 
 
     private fun setupTrackInfo(trackData: Track?) {

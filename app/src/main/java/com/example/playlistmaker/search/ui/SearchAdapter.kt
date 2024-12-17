@@ -6,10 +6,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.models.Track
 
-class SearchAdapter(private val tracks: ArrayList<Track>, private val onTrackClick: (Track) -> Unit) : RecyclerView.Adapter<SearchViewHolder>() {
+class SearchAdapter(
+    private val tracks: ArrayList<Track> = arrayListOf(),
+    private val onTrackClick: (Track) -> Unit
+) : RecyclerView.Adapter<SearchViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchViewHolder {
         val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.search_track_item, parent, false)
+            .inflate(R.layout.search_track_item, parent, false)
         return SearchViewHolder(view)
     }
 

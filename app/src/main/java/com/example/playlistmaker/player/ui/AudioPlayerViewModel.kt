@@ -12,15 +12,16 @@ import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.player.domain.api.AudioPlayerInteractor
 
 
-class AudioPlayerViewModel(private val player: AudioPlayerInteractor, private val previewUrl: String) : ViewModel() {
+class AudioPlayerViewModel(
+    private val player: AudioPlayerInteractor,
+    private val previewUrl: String
+) : ViewModel() {
 
 
+    private val _playerState =
+        MutableLiveData<AudioPlayerScreenState>(AudioPlayerScreenState.Default)
+    val playerState: LiveData<AudioPlayerScreenState> get() = _playerState
 
-    private val _playerState = MutableLiveData(STATE_DEFAULT)
-    val playerState: LiveData<Int> get() = _playerState
-
-    private val _currentPosition = MutableLiveData("00:00")
-    val currentPosition: LiveData<String> get() = _currentPosition
 
     private val handler = Handler(Looper.getMainLooper())
     private var playbackRunnable: Runnable
@@ -34,12 +35,12 @@ class AudioPlayerViewModel(private val player: AudioPlayerInteractor, private va
     private fun playerPrepare() {
         player.prepare(previewUrl,
             onPrepared = {
-                _playerState.value = STATE_PREPARED
+                _playerState.value = AudioPlayerScreenState.Prepared
             },
             onCompletion = {
                 handler.removeCallbacks(playbackRunnable)
-                _currentPosition.value = "00:00"
-                _playerState.value = STATE_PREPARED
+                _playerState.value = AudioPlayerScreenState.Paused("00:00")
+                _playerState.value = AudioPlayerScreenState.Prepared
             }
         )
     }
@@ -48,20 +49,22 @@ class AudioPlayerViewModel(private val player: AudioPlayerInteractor, private va
     fun startPlayer() {
         player.start()
         handler.post(playbackRunnable)
-//        binding.playButton.setBackgroundResource(R.drawable.pause_button)
-        _playerState.value = STATE_PLAYING
+        _playerState.value = AudioPlayerScreenState.Playing(player.getCurrentPosition())
     }
 
     fun pausePlayer() {
         handler.removeCallbacks(playbackRunnable)
         player.pause()
-//        binding.playButton.setBackgroundResource(R.drawable.play_button)
-        _playerState.value = STATE_PAUSED
+        _playerState.value = AudioPlayerScreenState.Paused(player.getCurrentPosition())
     }
 
 
     private fun updatePlaybackTime() {
-        _currentPosition.value = player.getCurrentPosition()
+        _playerState.value = when (_playerState.value) {
+            is AudioPlayerScreenState.Playing -> AudioPlayerScreenState.Playing(player.getCurrentPosition())
+            is AudioPlayerScreenState.Paused -> AudioPlayerScreenState.Paused(player.getCurrentPosition())
+            else -> _playerState.value
+        }
         handler.postDelayed(playbackRunnable, DELAY)
     }
 
@@ -72,7 +75,7 @@ class AudioPlayerViewModel(private val player: AudioPlayerInteractor, private va
     }
 
     companion object {
-        fun getViewModelFactory( previewUrl: String ): ViewModelProvider.Factory = viewModelFactory {
+        fun getViewModelFactory(previewUrl: String): ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 AudioPlayerViewModel(
                     Creator.provideAudioPlayerInteractor(),
@@ -81,10 +84,6 @@ class AudioPlayerViewModel(private val player: AudioPlayerInteractor, private va
             }
         }
 
-        const val STATE_DEFAULT = 0
-        const val STATE_PREPARED = 1
-        const val STATE_PLAYING = 2
-        const val STATE_PAUSED = 3
         const val DELAY = 300L
     }
 }
