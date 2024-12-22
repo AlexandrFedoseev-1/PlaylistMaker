@@ -3,7 +3,8 @@ package com.example.playlistmaker
 import android.app.Application
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.playlistmaker.domain.api.SettingsInteractor
+import com.example.playlistmaker.creator.Creator
+import com.example.playlistmaker.settings.domain.api.SettingsInteractor
 
 class App : Application() {
     private lateinit var settingsInteractor: SettingsInteractor
@@ -34,16 +35,6 @@ class App : Application() {
         }
     }
 
-    fun switchTheme(darkThemeEnabled: Boolean) {
-        settingsInteractor.saveTheme(darkThemeEnabled)
-        AppCompatDelegate.setDefaultNightMode(
-            if (darkThemeEnabled) {
-                AppCompatDelegate.MODE_NIGHT_YES
-            } else {
-                AppCompatDelegate.MODE_NIGHT_NO
-            }
-        )
-    }
 
     companion object {
         const val SETTING_PREFERENCES = "setting_preferences"
