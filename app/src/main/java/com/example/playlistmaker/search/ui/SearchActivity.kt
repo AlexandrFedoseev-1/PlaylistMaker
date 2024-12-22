@@ -17,10 +17,11 @@ import com.example.playlistmaker.player.ui.AudioPlayerActivity
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.search.domain.models.Track
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
     private var savedText: String? = null
-    private lateinit var viewModel: SearchViewModel
+    private val viewModel by viewModel<SearchViewModel>()
 
     private val searchAdapter by lazy { SearchAdapter(onTrackClick = ::onTrackClick) }
     private val historyAdapter by lazy { SearchAdapter(onTrackClick = ::onTrackClick) }
@@ -39,11 +40,6 @@ class SearchActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.searchList.adapter = searchAdapter
-        viewModel = ViewModelProvider(
-            this,
-            SearchViewModel.getViewModelFactory()
-        )[SearchViewModel::class.java]
-
 
         binding.historySearchList.adapter = historyAdapter
 

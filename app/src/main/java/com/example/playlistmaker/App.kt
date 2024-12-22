@@ -3,15 +3,23 @@ package com.example.playlistmaker
 import android.app.Application
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.playlistmaker.creator.Creator
+import com.example.playlistmaker.di.dataModule
+import com.example.playlistmaker.di.interactorModule
+import com.example.playlistmaker.di.viewModelModule
 import com.example.playlistmaker.settings.domain.api.SettingsInteractor
+import org.koin.android.ext.android.inject
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
+
 
 class App : Application() {
-    private lateinit var settingsInteractor: SettingsInteractor
+    private val settingsInteractor: SettingsInteractor by inject()
     override fun onCreate() {
         super.onCreate()
-        Creator.initialize(this)
-        settingsInteractor = Creator.provideSettingsInteractor()
+        startKoin{
+            androidContext(this@App)
+            modules(dataModule, interactorModule, viewModelModule)
+        }
 
         val theme = settingsInteractor.isDarkThemeEnabled()
         if (theme != null) {
