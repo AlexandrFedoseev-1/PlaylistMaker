@@ -15,6 +15,11 @@
     <string name="user_agreement_url">https://yandex.ru/legal/practicum_offer/</string>
     <string name="placeholder_not_found">Ничего не нашлось</string>
     <string name="placeholder_error">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="favorites_placeholder">Ваша медиатека пуста</string>
+    <string name="playlist_placeholder">Вы не создали\n ни одного плейлиста</string>
+    <string name="new_playlist">Новый плейлист</string>
+    <string name="playlists">Плейлисты</string>
+    <string name="favorites_tracks">Избранные треки</string>
     <string name="update_button">Обновить</string>
     <string name="clear_history_button">Очистить историю</string>
     <string name="text_track_time">Длительность</string>

@@ -94,21 +94,12 @@
 
         <TextView
             android:id="@+id/placeholder_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            tools:text="Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету"
-            android:textSize="@dimen/placeholder_text_size"
-            android:fontFamily="@font/ys_display_medium"
-            android:gravity="center"
-            android:textColor="?attr/colorOnPrimary"/>
+            style="@style/PlaceholderTextStyle"
+            tools:text="Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету" />
 
         <Button
             android:id="@+id/update_button"
-            style="@style/SearchActivityButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            style="@style/LittleButtonStyle"
             android:text="@string/update_button" />
     </LinearLayout>
 
@@ -119,7 +110,7 @@
         android:layout_marginTop="50dp"
         android:gravity="center"
         android:orientation="vertical"
-        android:visibility="gone"
+
         >
 
         <TextView
@@ -143,10 +134,7 @@
 
         <Button
             android:id="@+id/clear_search_history"
-            style="@style/SearchActivityButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            style="@style/LittleButtonStyle"
             android:text="@string/clear_history_button"
             />
     </LinearLayout>

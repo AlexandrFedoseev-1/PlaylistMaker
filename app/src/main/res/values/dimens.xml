@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="head_text_size">22sp</dimen>
-    <dimen name="placeholder_text_size">19sp</dimen>
-    <dimen name="placeholder_button_text_size">14sp</dimen>
     <dimen name="text_size">16sp</dimen>
     <dimen name="small_text_size">11sp</dimen>
     <dimen name="track_info_text_size">13sp</dimen>
+
+    <dimen name="tabLayout_text_size">14sp</dimen>
+    <dimen name="tabLayout_height">48dp</dimen>
+
+    <dimen name="placeholder_text_size">19sp</dimen>
+    <dimen name="placeholder_button_text_size">14sp</dimen>
+    <dimen name="placeholder_button_margin_top">24dp</dimen>
+
 
     <dimen name="padding">16dp</dimen>
     <dimen name="zero">0dp</dimen>
