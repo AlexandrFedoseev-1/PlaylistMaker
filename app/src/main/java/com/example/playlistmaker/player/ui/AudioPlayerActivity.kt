@@ -10,10 +10,14 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.example.playlistmaker.search.domain.models.Track
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class AudioPlayerActivity : AppCompatActivity() {
-
-    private lateinit var viewModel: AudioPlayerViewModel
+    private lateinit var previewUrl: String
+    private val viewModel by viewModel<AudioPlayerViewModel>() {
+        parametersOf(previewUrl)
+    }
     private lateinit var binding: ActivityAudioPlayerBinding
 
 
@@ -22,13 +26,7 @@ class AudioPlayerActivity : AppCompatActivity() {
         binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
         val trackData: Track? = intent.getParcelableExtra("TRACK")
-        val previewUrl = trackData?.previewUrl.toString()
-        viewModel = ViewModelProvider(
-            this,
-            AudioPlayerViewModel.getViewModelFactory(previewUrl)
-        )[AudioPlayerViewModel::class.java]
-
-
+        previewUrl = trackData?.previewUrl.toString()
 
         setupTrackInfo(trackData)
 

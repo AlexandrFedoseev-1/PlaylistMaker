@@ -2,13 +2,17 @@ package com.example.playlistmaker.settings.data
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.Uri
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.playlistmaker.App
 import com.example.playlistmaker.R
 
-class SettingsLocalDataSource(private val context: Context) {
-    private val sharedPref = context.getSharedPreferences(App.SETTING_PREFERENCES, Context.MODE_PRIVATE)
+class SettingsLocalDataSource(
+    private val context: Context,
+    private val sharedPref: SharedPreferences
+) {
+
     fun isDarkThemeEnabled(): Boolean? {
         val theme = sharedPref.getString(App.DARK_THEME, null)
         return theme?.toBooleanStrictOrNull()
@@ -52,7 +56,10 @@ class SettingsLocalDataSource(private val context: Context) {
     }
 
     fun showUserAgreement() {
-        val userAgreementIntent = Intent(Intent.ACTION_VIEW, Uri.parse(context.getString(R.string.user_agreement_url))).apply {
+        val userAgreementIntent = Intent(
+            Intent.ACTION_VIEW,
+            Uri.parse(context.getString(R.string.user_agreement_url))
+        ).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) // Добавляем флаг
         }
         context.startActivity(userAgreementIntent)
