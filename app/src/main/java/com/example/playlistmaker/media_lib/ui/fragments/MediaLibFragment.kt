@@ -13,7 +13,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 
 class MediaLibFragment : Fragment() {
 
-    private val viewPagerAdapter by lazy { MediaLibViewPagerAdapter(childFragmentManager,lifecycle) }
+    private lateinit var viewPagerAdapter: MediaLibViewPagerAdapter
     private lateinit var tabMediator : TabLayoutMediator
     private lateinit var binding: FragmentMediaLibBinding
 
@@ -27,6 +27,7 @@ class MediaLibFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewPagerAdapter = MediaLibViewPagerAdapter(childFragmentManager,lifecycle)
         binding.viewPager.adapter = viewPagerAdapter
         tabMediator = TabLayoutMediator(binding.tabLayout, binding.viewPager){
                 tab, position ->
