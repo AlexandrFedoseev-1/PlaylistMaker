@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="?attr/colorPrimary"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".search.ui.SearchFragment">
 
 
     <com.google.android.material.appbar.MaterialToolbar
@@ -16,56 +17,55 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="36dp"
-        android:orientation="horizontal"
         android:layout_marginHorizontal="@dimen/padding"
         android:layout_marginTop="8dp"
         android:background="@drawable/search_field_background"
         android:gravity="center"
-        >
+        android:orientation="horizontal">
+
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/search_icon"
             android:layout_marginStart="12dp"
-            />
+            android:src="@drawable/search_icon" />
 
         <EditText
+            android:id="@+id/search"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:id="@+id/search"
-            android:gravity="center_vertical"
-            android:paddingHorizontal="8dp"
             android:background="@drawable/search_field_background"
-            android:hint="@string/search"
-            android:inputType="text"
-            android:textSize="@dimen/text_size"
-            android:textColorHint="?attr/colorOnSecondary"
-            android:textColor="@color/black"
             android:fontFamily="@font/ys_display_regular"
+            android:gravity="center_vertical"
+            android:hint="@string/search"
             android:imeOptions="actionDone"
-            android:singleLine="true"
+            android:inputType="text"
             android:lines="1"
             android:maxLength="25"
-            />
+            android:paddingHorizontal="8dp"
+            android:singleLine="true"
+            android:textColor="@color/black"
+            android:textColorHint="?attr/colorOnSecondary"
+            android:textSize="@dimen/text_size" />
+
         <ImageView
+            android:id="@+id/clear_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/clear_text"
-            android:src="@drawable/clear_search"
             android:layout_marginEnd="6dp"
-            android:visibility="gone"/>
+            android:src="@drawable/clear_search"
+            android:visibility="gone" />
 
     </LinearLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/search_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:layout_marginTop="24dp"
         android:visibility="gone"
-        />
-    
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
     <ProgressBar
         android:id="@+id/progress_bar"
         android:layout_width="@dimen/p_bar_size"
@@ -73,8 +73,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="148dp"
         android:indeterminateTint="@color/blue"
-        android:visibility="gone"
-        />
+        android:visibility="gone" />
 
 
     <LinearLayout
@@ -82,15 +81,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="110dp"
-        android:paddingHorizontal="24dp"
         android:gravity="center"
         android:orientation="vertical"
-        android:visibility="gone"
-        >
+        android:paddingHorizontal="24dp"
+        android:visibility="gone">
+
         <ImageView
+            android:id="@+id/placeholder_image"
             android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:id="@+id/placeholder_image"/>
+            android:layout_height="120dp" />
 
         <TextView
             android:id="@+id/placeholder_text"
@@ -117,26 +116,24 @@
             android:id="@+id/search_history_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/search_history_head"
-            android:textSize="@dimen/placeholder_text_size"
             android:fontFamily="@font/ys_display_medium"
             android:gravity="center"
-            android:textColor="?attr/colorOnPrimary"/>
+            android:text="@string/search_history_head"
+            android:textColor="?attr/colorOnPrimary"
+            android:textSize="@dimen/placeholder_text_size" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/history_search_list"
             android:layout_width="match_parent"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             android:layout_height="0dp"
-            android:layout_weight="1"
             android:layout_marginTop="20dp"
-            />
+            android:layout_weight="1"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
         <Button
             android:id="@+id/clear_search_history"
             style="@style/LittleButtonStyle"
-            android:text="@string/clear_history_button"
-            />
+            android:text="@string/clear_history_button" />
     </LinearLayout>
 
 </LinearLayout>
