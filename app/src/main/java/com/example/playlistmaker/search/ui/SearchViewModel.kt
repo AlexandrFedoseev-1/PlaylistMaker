@@ -4,17 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.playlistmaker.debounce
 import com.example.playlistmaker.search.domain.api.TracksInteractor
-import com.example.playlistmaker.search.domain.consumer.Consumer
-import com.example.playlistmaker.search.domain.consumer.ConsumerData
 import com.example.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlin.coroutines.coroutineContext
+
 
 class SearchViewModel(private val tracksInteractor: TracksInteractor) : ViewModel() {
     companion object {
