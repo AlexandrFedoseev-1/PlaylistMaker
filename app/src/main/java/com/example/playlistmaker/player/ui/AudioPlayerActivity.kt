@@ -4,7 +4,6 @@ package com.example.playlistmaker.player.ui
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
@@ -31,31 +30,14 @@ class AudioPlayerActivity : AppCompatActivity() {
         setupTrackInfo(trackData)
 
         binding.playButton.setOnClickListener {
-            playbackControl()
+            viewModel.playbackControl()
         }
         binding.toolbar.setNavigationOnClickListener { super.finish() }
 
         viewModel.playerState.observe(this) { state ->
-            when (state) {
-                is AudioPlayerScreenState.Default -> {
-                    binding.playButton.setBackgroundResource(R.drawable.play_button)
-                    binding.demoPlayTime.text = "00:00"
-                }
-
-                is AudioPlayerScreenState.Prepared -> {
-                    binding.playButton.setBackgroundResource(R.drawable.play_button)
-                }
-
-                is AudioPlayerScreenState.Playing -> {
-                    binding.playButton.setBackgroundResource(R.drawable.pause_button)
-                    binding.demoPlayTime.text = state.currentPosition
-                }
-
-                is AudioPlayerScreenState.Paused -> {
-                    binding.playButton.setBackgroundResource(R.drawable.play_button)
-                    binding.demoPlayTime.text = state.currentPosition
-                }
-            }
+            binding.playButton.isEnabled = state.isPlayButtonEnabled
+            binding.playButton.setBackgroundResource(state.buttonImage)
+            binding.demoPlayTime.text = state.progress
 
         }
 
@@ -64,14 +46,6 @@ class AudioPlayerActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         viewModel.pausePlayer()
-    }
-
-    private fun playbackControl() {
-        when (viewModel.playerState.value) {
-            is AudioPlayerScreenState.Playing -> viewModel.pausePlayer()
-            is AudioPlayerScreenState.Prepared, is AudioPlayerScreenState.Paused -> viewModel.startPlayer()
-            else -> Unit
-        }
     }
 
 

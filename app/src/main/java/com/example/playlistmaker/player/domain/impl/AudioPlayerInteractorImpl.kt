@@ -4,7 +4,8 @@ import com.example.playlistmaker.player.domain.api.AudioPlayer
 import com.example.playlistmaker.player.domain.api.AudioPlayerInteractor
 
 class AudioPlayerInteractorImpl(private val player: AudioPlayer): AudioPlayerInteractor {
-
+    override val isPlaying: Boolean
+        get() = player.isPlaying
 
     override fun prepare(previewUrl: String, onPrepared: () -> Unit, onCompletion: () -> Unit) {
         player.prepare(previewUrl,onPrepared,onCompletion)

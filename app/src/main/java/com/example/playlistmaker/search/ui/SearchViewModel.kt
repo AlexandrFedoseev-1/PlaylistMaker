@@ -1,31 +1,34 @@
 package com.example.playlistmaker.search.ui
 
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.search.domain.api.TracksInteractor
-import com.example.playlistmaker.search.domain.consumer.Consumer
-import com.example.playlistmaker.search.domain.consumer.ConsumerData
 import com.example.playlistmaker.search.domain.models.Track
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+
 
 class SearchViewModel(private val tracksInteractor: TracksInteractor) : ViewModel() {
+    companion object {
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+    }
 
     private val searchScreenStateLiveData = MutableLiveData<ScreenState>()
     val screenState: LiveData<ScreenState> get() = searchScreenStateLiveData
 
     private var latestSearchText: String? = null
     private lateinit var history: ArrayList<Track>
-    private val debouncer = Debouncer(Handler(Looper.getMainLooper()))
 
+    private var searchJob: Job? = null
 
-    private var isCanceled = false
     init {
         loadSearchHistory()
         setEmptyState()
     }
-
 
     fun clearHistory() {
         tracksInteractor.clearHistory()
@@ -33,51 +36,50 @@ class SearchViewModel(private val tracksInteractor: TracksInteractor) : ViewMode
         showHistory()
     }
 
-
     fun trackSearchDebounce(changedText: String) {
         if (latestSearchText == changedText && searchScreenStateLiveData.value !is ScreenState.Placeholder) {
             return
         }
-        this.latestSearchText = changedText
-        debouncer.submit { trackSearch(changedText) }
-    }
-    private fun cancelSearchDebounce(){
-        isCanceled = true
-        debouncer.cancel()
+        latestSearchText = changedText
+        searchJob?.cancel() // Отменяем предыдущее выполнение
+        searchJob = viewModelScope.launch {
+            delay(SEARCH_DEBOUNCE_DELAY)
+            if (isActive) {
+                trackSearch(changedText)
+            }
+        }
     }
 
+    private fun cancelSearchDebounce() {
+        searchJob?.cancel() // Отмена дебаунс-таймера
+    }
 
     fun trackSearch(query: String) {
         if (query.isNotEmpty()) {
-            isCanceled = false
             searchScreenStateLiveData.postValue(ScreenState.Loading)
-            tracksInteractor.searchTracks(query, object : Consumer<List<Track>> {
-                override fun consume(data: ConsumerData<List<Track>>) {
-                    if (!isCanceled) {
-                        handleSearchResult(data)
+
+            searchJob?.cancel() // Отменяем предыдущий поиск, если он был
+            searchJob = viewModelScope.launch {
+                tracksInteractor.searchTracks(query).collect { pair ->
+                    if (isActive) { // Проверяем, не отменили ли корутину
+                        handleSearchResult(pair.first, pair.second)
                     }
                 }
-            })
+            }
         }
     }
 
-
-    private fun handleSearchResult(data: ConsumerData<List<Track>>) {
-        when (data) {
-            is ConsumerData.Data -> handleSearchSuccess(data.value)
-            is ConsumerData.Error -> searchScreenStateLiveData.postValue(
-                ScreenState.Placeholder(
-                    ScreenState.NO_INTERNET
-                )
+    private  fun handleSearchResult(tracks: List<Track>?, errorMessage: String?) {
+        when {
+            tracks.isNullOrEmpty() -> searchScreenStateLiveData.postValue(
+                ScreenState.Placeholder(ScreenState.NOT_FOUND)
             )
-        }
-    }
 
-    private fun handleSearchSuccess(tracks: List<Track>) {
-        if (tracks.isNotEmpty()) {
-            searchScreenStateLiveData.postValue(ScreenState.SearchResults(tracks))
-        } else {
-            searchScreenStateLiveData.postValue(ScreenState.Placeholder(ScreenState.NOT_FOUND))
+            errorMessage != null -> searchScreenStateLiveData.postValue(
+                ScreenState.Placeholder(ScreenState.NO_INTERNET)
+            )
+
+            else -> searchScreenStateLiveData.postValue(ScreenState.SearchResults(tracks))
         }
     }
 
@@ -106,5 +108,4 @@ class SearchViewModel(private val tracksInteractor: TracksInteractor) : ViewMode
             searchScreenStateLiveData.value = ScreenState.SearchHistory(history)
         }
     }
-
 }

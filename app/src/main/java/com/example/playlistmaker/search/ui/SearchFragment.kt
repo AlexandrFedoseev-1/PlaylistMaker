@@ -3,8 +3,6 @@ package com.example.playlistmaker.search.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import androidx.fragment.app.Fragment
@@ -14,33 +12,41 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
+import com.example.playlistmaker.debounce
 import com.example.playlistmaker.player.ui.AudioPlayerActivity
 import com.example.playlistmaker.search.domain.models.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
-
 
 
 class SearchFragment : Fragment() {
     private var savedText: String? = null
     private val viewModel by viewModel<SearchViewModel>()
 
-    private val searchAdapter by lazy { SearchAdapter(onTrackClick = ::onTrackClick) }
-    private val historyAdapter by lazy { SearchAdapter(onTrackClick = ::onTrackClick) }
+    private val searchAdapter by lazy {
+        SearchAdapter { track ->
+            onTrackClickDebounce(track)
+        }
+    }
+    private val historyAdapter by lazy {
+        SearchAdapter { track ->
+            onTrackClickDebounce(track)
+        }
+    }
 
 
     private lateinit var binding: FragmentSearchBinding
-    private val debouncer = Debouncer(
-        Handler(Looper.getMainLooper())
-    )
 
+
+    private lateinit var onTrackClickDebounce: (Track) -> Unit
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding =FragmentSearchBinding.inflate(inflater,container,false)
+        binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -50,6 +56,17 @@ class SearchFragment : Fragment() {
 
         binding.historySearchList.adapter = historyAdapter
 
+        onTrackClickDebounce =
+            debounce<Track>(
+                CLICK_DEBOUNCE_DELAY,
+                viewLifecycleOwner.lifecycleScope,
+                false
+            ) { track ->
+                viewModel.addToSearchHistory(track)
+                val intent = Intent(requireActivity(), AudioPlayerActivity::class.java)
+                intent.putExtra(TRACK, track)
+                startActivity(intent)
+            }
         binding.search.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 viewModel.trackSearchDebounce(binding.search.text.toString())
@@ -74,7 +91,8 @@ class SearchFragment : Fragment() {
 
         binding.clearText.setOnClickListener {
             binding.search.setText("")
-            val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            val imm =
+                requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             imm?.hideSoftInputFromWindow(binding.search.windowToken, 0)
             searchHistoryLayoutVisibility("")
         }
@@ -86,8 +104,8 @@ class SearchFragment : Fragment() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.clearText.isVisible = !s.isNullOrEmpty()
-                searchHistoryLayoutVisibility(s?:"")
-                viewModel.trackSearchDebounce(s?.toString()?:"")
+                searchHistoryLayoutVisibility(s ?: "")
+                viewModel.trackSearchDebounce(s?.toString() ?: "")
 
 
             }
@@ -134,14 +152,6 @@ class SearchFragment : Fragment() {
         binding.search.setText(savedText)
     }
 
-    private fun onTrackClick(track: Track) {
-        if (debouncer.clickDebounce()) {
-            viewModel.addToSearchHistory(track)
-            val intent = Intent(requireActivity(), AudioPlayerActivity::class.java)
-            intent.putExtra(TRACK, track)
-            startActivity(intent)
-        }
-    }
 
 
     private fun showMessage(massage: String) {
@@ -157,7 +167,6 @@ class SearchFragment : Fragment() {
 
 
     }
-
 
 
     private fun setScreenState(state: ScreenState) {
@@ -179,6 +188,7 @@ class SearchFragment : Fragment() {
     companion object {
         const val SAVED_TEXT = "SAVED_TEXT"
         const val TRACK = "TRACK"
+        private const val CLICK_DEBOUNCE_DELAY = 300L
         fun newInstance() =
             SearchFragment()
     }

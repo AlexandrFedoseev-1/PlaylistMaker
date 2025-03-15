@@ -1,11 +1,14 @@
 package com.example.playlistmaker.player.ui
 
-import android.os.Handler
-import android.os.Looper
+
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.player.domain.api.AudioPlayerInteractor
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 class AudioPlayerViewModel(
@@ -13,17 +16,15 @@ class AudioPlayerViewModel(
     private val previewUrl: String
 ) : ViewModel() {
 
+    private var timerJob: Job? = null
+
 
     private val _playerState =
-        MutableLiveData<AudioPlayerScreenState>(AudioPlayerScreenState.Default)
+        MutableLiveData<AudioPlayerScreenState>(AudioPlayerScreenState.Default())
     val playerState: LiveData<AudioPlayerScreenState> get() = _playerState
 
 
-    private val handler = Handler(Looper.getMainLooper())
-    private var playbackRunnable: Runnable
-
     init {
-        playbackRunnable = Runnable { updatePlaybackTime() }
         playerPrepare()
     }
 
@@ -31,43 +32,50 @@ class AudioPlayerViewModel(
     private fun playerPrepare() {
         player.prepare(previewUrl,
             onPrepared = {
-                _playerState.value = AudioPlayerScreenState.Prepared
+                _playerState.value = AudioPlayerScreenState.Prepared()
             },
             onCompletion = {
-                handler.removeCallbacks(playbackRunnable)
-                _playerState.value = AudioPlayerScreenState.Paused("00:00")
-                _playerState.value = AudioPlayerScreenState.Prepared
+                timerJob?.cancel()
+                _playerState.value = AudioPlayerScreenState.Prepared()
             }
         )
     }
 
 
-    fun startPlayer() {
+    private fun startPlayer() {
         player.start()
-        handler.post(playbackRunnable)
         _playerState.value = AudioPlayerScreenState.Playing(player.getCurrentPosition())
+        startTimer()
     }
 
     fun pausePlayer() {
-        handler.removeCallbacks(playbackRunnable)
         player.pause()
+        timerJob?.cancel()
         _playerState.value = AudioPlayerScreenState.Paused(player.getCurrentPosition())
     }
 
 
-    private fun updatePlaybackTime() {
-        _playerState.value = when (_playerState.value) {
-            is AudioPlayerScreenState.Playing -> AudioPlayerScreenState.Playing(player.getCurrentPosition())
-            is AudioPlayerScreenState.Paused -> AudioPlayerScreenState.Paused(player.getCurrentPosition())
-            else -> _playerState.value
+    private fun startTimer() {
+        timerJob = viewModelScope.launch {
+            while (player.isPlaying) {
+                delay(DELAY)
+                _playerState.value = AudioPlayerScreenState.Playing(player.getCurrentPosition())
+            }
         }
-        handler.postDelayed(playbackRunnable, DELAY)
+    }
+
+    fun playbackControl() {
+        when (playerState.value) {
+            is AudioPlayerScreenState.Playing -> pausePlayer()
+            is AudioPlayerScreenState.Prepared, is AudioPlayerScreenState.Paused -> startPlayer()
+            else -> Unit
+        }
     }
 
     override fun onCleared() {
         super.onCleared()
+        player.stop()
         player.release()
-        handler.removeCallbacks(playbackRunnable)
     }
 
     companion object {

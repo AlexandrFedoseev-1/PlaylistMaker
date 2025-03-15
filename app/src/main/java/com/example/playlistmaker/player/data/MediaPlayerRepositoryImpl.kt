@@ -6,6 +6,8 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 class MediaPlayerRepositoryImpl(private val mediaPlayer: MediaPlayer) : AudioPlayer {
+    override val isPlaying: Boolean
+        get() = mediaPlayer.isPlaying
 
     override fun prepare(previewUrl: String, onPrepared: () -> Unit, onCompletion: () -> Unit) {
         mediaPlayer.apply {
