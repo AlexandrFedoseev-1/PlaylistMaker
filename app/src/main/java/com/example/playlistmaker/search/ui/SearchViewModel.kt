@@ -97,15 +97,18 @@ class SearchViewModel(private val tracksInteractor: TracksInteractor) : ViewMode
         searchScreenStateLiveData.value = ScreenState.Empty
     }
 
-    private fun loadSearchHistory() {
-        history = tracksInteractor.getSearchHistory()
+    fun loadSearchHistory() {
+        viewModelScope.launch {  tracksInteractor.getSearchHistory().collect{trackHistory ->
+            history = ArrayList(trackHistory)
+            if (searchScreenStateLiveData.value is ScreenState.SearchHistory) {
+                searchScreenStateLiveData.value = ScreenState.SearchHistory(history)
+            }
+        } }
+
     }
 
     fun addToSearchHistory(track: Track) {
         tracksInteractor.addTrackToHistory(track)
         loadSearchHistory()
-        if (searchScreenStateLiveData.value is ScreenState.SearchHistory) {
-            searchScreenStateLiveData.value = ScreenState.SearchHistory(history)
-        }
     }
 }

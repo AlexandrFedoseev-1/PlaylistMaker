@@ -67,6 +67,8 @@ class SearchFragment : Fragment() {
                 intent.putExtra(TRACK, track)
                 startActivity(intent)
             }
+
+
         binding.search.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 viewModel.trackSearchDebounce(binding.search.text.toString())
@@ -139,6 +141,11 @@ class SearchFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.loadSearchHistory()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
