@@ -10,13 +10,11 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.example.playlistmaker.search.domain.models.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
+
 
 class AudioPlayerActivity : AppCompatActivity() {
-    private lateinit var previewUrl: String
-    private val viewModel by viewModel<AudioPlayerViewModel>() {
-        parametersOf(previewUrl)
-    }
+    private val viewModel by viewModel<AudioPlayerViewModel>()
+
     private lateinit var binding: ActivityAudioPlayerBinding
 
 
@@ -24,13 +22,16 @@ class AudioPlayerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val trackData: Track? = intent.getParcelableExtra("TRACK")
-        previewUrl = trackData?.previewUrl.toString()
+        val trackData:Track? = intent.getParcelableExtra("TRACK")
+        viewModel.setValues(trackData?.trackId.toString(),trackData?.previewUrl.toString())
 
         setupTrackInfo(trackData)
 
         binding.playButton.setOnClickListener {
             viewModel.playbackControl()
+        }
+        binding.addFavoritesButton.setOnClickListener {
+            viewModel.onFavoriteClicked(trackData)
         }
         binding.toolbar.setNavigationOnClickListener { super.finish() }
 
@@ -38,7 +39,13 @@ class AudioPlayerActivity : AppCompatActivity() {
             binding.playButton.isEnabled = state.isPlayButtonEnabled
             binding.playButton.setBackgroundResource(state.buttonImage)
             binding.demoPlayTime.text = state.progress
-
+        }
+        viewModel.isFavoriteLiveData.observe(this){ isFavorite ->
+            if (isFavorite){
+                binding.addFavoritesButton.setBackgroundResource(R.drawable.add_favorite_button_on)
+            }else{
+                binding.addFavoritesButton.setBackgroundResource(R.drawable.add_favorites_button)
+            }
         }
 
     }

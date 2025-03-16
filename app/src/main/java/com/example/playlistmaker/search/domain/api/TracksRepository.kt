@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 interface TracksRepository {
     fun getSearchTracks(exception: String): Flow<Resource<List<Track>>>
 
-    fun getSearchHistory(): ArrayList<Track>
+    fun getSearchHistory(): Flow<List<Track>>
     fun addTrackToHistory(track: Track)
     fun clearHistory()
 }
