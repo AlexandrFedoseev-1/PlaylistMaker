@@ -7,7 +7,7 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.models.Track
 
 class SearchAdapter(
-    private val tracks: ArrayList<Track> = arrayListOf(),
+    private val tracks: MutableList<Track> = mutableListOf(),
     private val onTrackClick: (Track) -> Unit
 ) : RecyclerView.Adapter<SearchViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchViewHolder {

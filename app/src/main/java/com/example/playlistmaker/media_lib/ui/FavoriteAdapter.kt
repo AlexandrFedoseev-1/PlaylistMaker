@@ -8,7 +8,7 @@ import com.example.playlistmaker.databinding.FavoriteTrackItemBinding
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.ui.SearchViewHolder
 
-class FavoriteAdapter(private val tracks: ArrayList<Track> = arrayListOf(),
+class FavoriteAdapter(private val tracks: MutableList<Track> = mutableListOf(),
                       private val onTrackClick: (Track) -> Unit
 ) : RecyclerView.Adapter<FavoriteViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteViewHolder {

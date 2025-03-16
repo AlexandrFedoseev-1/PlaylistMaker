@@ -17,4 +17,8 @@ class FavoriteTracksInteractorImpl(private val repository:FavoriteTracksReposito
     override fun getTracks(): Flow<List<Track>> {
         return repository.getTracks()
     }
+
+    override suspend fun getTracksId(): List<String> {
+        return repository.getTracksId()
+    }
 }

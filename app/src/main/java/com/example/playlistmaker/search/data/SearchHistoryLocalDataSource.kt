@@ -13,7 +13,8 @@ import kotlinx.coroutines.flow.flow
 
 class SearchHistoryLocalDataSource(
     private val sharedPref: SharedPreferences,
-    private val appDatabase: AppDatabase
+    private val appDatabase: AppDatabase,
+    private val gson: Gson
 ) {
 
 
@@ -22,7 +23,7 @@ class SearchHistoryLocalDataSource(
             sharedPref.getString(SEARCH_HISTORY_KEY, null) ?: return@flow emit(emptyList())
         val favoriteIds = appDatabase.favoriteTrackDao().getTracksId()
         val type = object : TypeToken<List<Track>>() {}.type
-        val trackList = Gson().fromJson<List<Track>>(json, type)
+        val trackList = gson.fromJson<List<Track>>(json, type)
 
         emit(trackList.map { track ->
             track.copy(isFavorite = track.trackId in favoriteIds)

@@ -20,6 +20,7 @@ class AudioPlayerViewModel(
 
     private var timerJob: Job? = null
     private var previewUrl: String = ""
+    private var trackId: String = ""
 
 
     private val _playerState =
@@ -29,13 +30,19 @@ class AudioPlayerViewModel(
     private val _isFavoriteLiveData = MutableLiveData<Boolean>()
     val isFavoriteLiveData: LiveData<Boolean> get() = _isFavoriteLiveData
 
-    fun setValues(isFavorite: Boolean?, previewUrl: String) {
+    fun setValues(trackId: String, previewUrl: String) {
         this.previewUrl = previewUrl
-        _isFavoriteLiveData.postValue(isFavorite?:false)
+        this.trackId = trackId
+        checkFavorites()
         playerPrepare()
     }
 
-
+    private fun checkFavorites() {
+        viewModelScope.launch {
+            val isFavorite = favoriteTracks.getTracksId().contains(trackId)
+            _isFavoriteLiveData.postValue(isFavorite)
+        }
+    }
 
 
     fun onFavoriteClicked(track: Track?) {

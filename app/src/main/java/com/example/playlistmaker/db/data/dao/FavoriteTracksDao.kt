@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface FavoriteTracksDao {
-    @Insert(onConflict =  OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTrack(track: FavoriteTracksEntity)
 
     @Delete
@@ -20,5 +20,5 @@ interface FavoriteTracksDao {
     fun getTracks(): Flow<List<FavoriteTracksEntity>>
 
     @Query("SELECT trackId FROM favorite_tracks")
-    suspend fun getTracksId():List<String>
+    suspend fun getTracksId(): List<String>
 }

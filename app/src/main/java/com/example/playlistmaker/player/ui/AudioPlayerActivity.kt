@@ -10,7 +10,7 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.example.playlistmaker.search.domain.models.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
+
 
 class AudioPlayerActivity : AppCompatActivity() {
     private val viewModel by viewModel<AudioPlayerViewModel>()
@@ -23,7 +23,7 @@ class AudioPlayerActivity : AppCompatActivity() {
         binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
         val trackData:Track? = intent.getParcelableExtra("TRACK")
-        viewModel.setValues(trackData?.isFavorite,trackData?.previewUrl.toString())
+        viewModel.setValues(trackData?.trackId.toString(),trackData?.previewUrl.toString())
 
         setupTrackInfo(trackData)
 

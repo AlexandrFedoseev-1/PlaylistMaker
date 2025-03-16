@@ -4,7 +4,7 @@ import android.content.Context
 import android.media.MediaPlayer
 import androidx.room.Room
 import com.example.playlistmaker.App
-import com.example.playlistmaker.db.TrackDbConvertor
+import com.example.playlistmaker.db.TrackEntityMapper
 import com.example.playlistmaker.player.data.MediaPlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.api.AudioPlayer
 import com.example.playlistmaker.search.data.NetworkClient
@@ -19,6 +19,7 @@ import com.example.playlistmaker.search.domain.api.TracksRepository
 import com.example.playlistmaker.settings.data.SettingsLocalDataSource
 import com.example.playlistmaker.settings.data.SettingsRepositoryImpl
 import com.example.playlistmaker.settings.domain.api.SettingsRepository
+import com.google.gson.Gson
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -59,7 +60,11 @@ val dataModule = module {
         )
     }
     single {
-        SearchHistoryLocalDataSource(sharedPref = get(named("SearchHistorySharedPref")), appDatabase = get())
+        SearchHistoryLocalDataSource(
+            sharedPref = get(named("SearchHistorySharedPref")),
+            appDatabase = get(),
+            gson = get()
+        )
     }
 
 //    Repositories
@@ -72,7 +77,11 @@ val dataModule = module {
     }
 
     single<TracksRepository> {
-        TracksRepositoryImpl(networkClient = get(), searchHistoryLocalDataSource = get(), appDatabase = get())
+        TracksRepositoryImpl(
+            networkClient = get(),
+            searchHistoryLocalDataSource = get(),
+            appDatabase = get()
+        )
     }
     single<SettingsRepository> {
         SettingsRepositoryImpl(settingsLocalDataSource = get())
@@ -84,11 +93,13 @@ val dataModule = module {
         Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db").build()
     }
 
-    factory { TrackDbConvertor() }
+    factory { TrackEntityMapper() }
 
     single<FavoriteTracksRepository> {
         FavoriteTracksRepositoryImp(get(), get())
     }
 
+//    Gson
 
+    single { Gson() }
 }
