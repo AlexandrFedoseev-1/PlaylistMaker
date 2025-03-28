@@ -2,27 +2,42 @@ package com.example.playlistmaker.search.data
 
 
 import android.content.SharedPreferences
+import com.example.playlistmaker.db.data.AppDatabase
 import com.example.playlistmaker.search.domain.models.Track
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 
-class SearchHistoryLocalDataSource(private val sharedPref: SharedPreferences) {
+class SearchHistoryLocalDataSource(
+    private val sharedPref: SharedPreferences,
+    private val appDatabase: AppDatabase,
+    private val gson: Gson
+) {
 
 
-     fun getSearchHistory(): ArrayList<Track> {
-        val json = sharedPref.getString(SEARCH_HISTORY_KEY, null)
-        if (json != null) {
-            val type = object : TypeToken<ArrayList<Track>>() {}.type
-            return Gson().fromJson(json, type)
-        }
-        return ArrayList()
+    fun getSearchHistory(): Flow<List<Track>> = flow {
+        val json: String =
+            sharedPref.getString(SEARCH_HISTORY_KEY, null) ?: return@flow emit(emptyList())
+        val favoriteIds = appDatabase.favoriteTrackDao().getTracksId()
+        val type = object : TypeToken<List<Track>>() {}.type
+        val trackList = gson.fromJson<List<Track>>(json, type)
+
+        emit(trackList.map { track ->
+            track.copy(isFavorite = track.trackId in favoriteIds)
+        })
     }
 
+    private fun getSearchHistorySync(): List<Track> {
+        val json: String = sharedPref.getString(SEARCH_HISTORY_KEY, null) ?: return emptyList()
+        val type = object : TypeToken<List<Track>>() {}.type
+        return Gson().fromJson(json, type)
+    }
 
     fun addTrackToHistory(track: Track) {
-        val history = getSearchHistory().toMutableList()
+        val history = getSearchHistorySync().toMutableList()
         history.removeAll { it.trackId == track.trackId }
         history.add(0, track)
         if (history.size > MAX_HISTORY_SIZE) {

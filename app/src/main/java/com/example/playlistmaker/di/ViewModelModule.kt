@@ -17,12 +17,12 @@ val viewModelModule = module {
         SettingsViewModel(get())
     }
 
-    viewModel{(previewUrl:String)->
-        AudioPlayerViewModel(get(), previewUrl = previewUrl )
+    viewModel{
+        AudioPlayerViewModel(get(), favoriteTracks = get() )
     }
 
     viewModel {
-        FavoritesTracksViewModel()
+        FavoritesTracksViewModel(favoriteTracksInteractor = get())
     }
 
     viewModel{
