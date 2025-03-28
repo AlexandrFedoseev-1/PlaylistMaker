@@ -36,7 +36,7 @@ class PlaylistRepositoryImpl(
     override suspend fun getPlaylistTracksId(): List<String> {
         return appDatabase.playlistDao().getPlaylistTracksId()
     }
-    override suspend fun addTrackToPlaylist(track:Track, playlist: Playlist) : String {
+    override suspend fun addTrackToPlaylist(track:Track, playlist: Playlist) : Boolean {
         try {
             val updatedTracksId = playlist.tracksId.toMutableList().apply {
                 add(track.trackId)
@@ -47,9 +47,9 @@ class PlaylistRepositoryImpl(
             )
             updatePlaylist(updatedPlaylist)
             appDatabase.addTracksToPlaylistsDao().insertTrack(addTracksEntityMapper.map(track))
-            return "Добавлено в плейлист '${updatedPlaylist.name}'"
+            return true
         }catch (e:Exception){
-            return "Ошибка добавления("
+            return true
         }
 
     }

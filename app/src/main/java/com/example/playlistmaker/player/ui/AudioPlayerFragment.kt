@@ -65,7 +65,7 @@ class AudioPlayerFragment : Fragment() {
         setupBottomSheet()
 
         bottomSheetBinding.rvPlaylists.adapter = bottomSheetPlaylistAdapter
-            onPlaylistClickDebounce =
+        onPlaylistClickDebounce =
             debounce(
                 CLICK_DEBOUNCE_DELAY,
                 viewLifecycleOwner.lifecycleScope,
@@ -108,11 +108,11 @@ class AudioPlayerFragment : Fragment() {
         viewModel.addTrackStatus.observe(viewLifecycleOwner) { status ->
             when (status) {
                 is AddPlaylistResult.Success -> {
-                    showSnackBar(status.message)
+                    showSnackBar(getString(R.string.add_track_to_playlist) + " '${status.message}'")
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                 }
 
-                is AddPlaylistResult.Error -> showSnackBar(status.message)
+                is AddPlaylistResult.Error -> showSnackBar(getString(R.string.already_add) + " '${status.message}'")
             }
         }
 

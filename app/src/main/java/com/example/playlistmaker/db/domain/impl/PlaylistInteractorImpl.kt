@@ -27,7 +27,7 @@ class PlaylistInteractorImpl(private val repository: PlaylistRepository) : Playl
         return repository.getPlaylistTracksId()
     }
 
-    override suspend fun addTrackToPlaylist(track: Track, playlist: Playlist): String {
+    override suspend fun addTrackToPlaylist(track: Track, playlist: Playlist): Boolean {
         return repository.addTrackToPlaylist(track, playlist)
     }
 }

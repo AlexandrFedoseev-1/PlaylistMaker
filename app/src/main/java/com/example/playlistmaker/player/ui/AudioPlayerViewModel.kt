@@ -45,20 +45,21 @@ class AudioPlayerViewModel(
         getPlaylists()
     }
 
-    private fun getPlaylists(){
+    private fun getPlaylists() {
         viewModelScope.launch(Dispatchers.IO) {
-            playlistInteractor.getPlaylist().collect{ listPlaylist ->
+            playlistInteractor.getPlaylist().collect { listPlaylist ->
                 _playlists.postValue(listPlaylist)
             }
         }
     }
-    fun addTrackToPlaylist(track: Track, playlist: Playlist){
-        if (playlist.tracksId.contains(trackId)){
-            _addTrackStatus.postValue(AddPlaylistResult.Error(ALREADY_ADDED + "'${playlist.name}'") )
-        }else{
+
+    fun addTrackToPlaylist(track: Track, playlist: Playlist) {
+        if (playlist.tracksId.contains(trackId)) {
+            _addTrackStatus.postValue(AddPlaylistResult.Error(playlist.name))
+        } else {
             viewModelScope.launch(Dispatchers.IO) {
-                val resultMassage = playlistInteractor.addTrackToPlaylist(track,playlist)
-                _addTrackStatus.postValue(AddPlaylistResult.Success(resultMassage))
+                if (playlistInteractor.addTrackToPlaylist(track, playlist))
+                    _addTrackStatus.postValue(AddPlaylistResult.Success(playlist.name))
             }
         }
     }
@@ -141,7 +142,6 @@ class AudioPlayerViewModel(
     }
 
     companion object {
-        const val ALREADY_ADDED = "Трек уже добавлен в плейлист "
         const val DELAY = 300L
     }
 }

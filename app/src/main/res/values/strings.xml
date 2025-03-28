@@ -36,5 +36,7 @@
     <string name="complete">Завершить</string>
     <string name="playlist_create">Создать</string>
     <string name="add_on_playlist_bottom_sheet">Добавить в плейлист</string>
+    <string name="already_add">Трек уже добавлен в плейлист </string>
+    <string name="add_track_to_playlist">Добавлено в плейлист  </string>
 
 </resources>
