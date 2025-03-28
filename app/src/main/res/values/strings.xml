@@ -28,4 +28,13 @@
     <string name="text_genre_name">Жанр</string>
     <string name="text_country">Страна</string>
     <string name="search_history_head">Вы искали</string>
+    <string name="playlist_name_input">Название*</string>
+    <string name="playlist_description">Описание</string>
+    <string name="playlist_cancel_request">Завершить создание плейлиста?</string>
+    <string name="unsaved_date_description">Все несохраненные данные будут потеряны</string>
+    <string name="cansel">Отмена</string>
+    <string name="complete">Завершить</string>
+    <string name="playlist_create">Создать</string>
+    <string name="add_on_playlist_bottom_sheet">Добавить в плейлист</string>
+
 </resources>

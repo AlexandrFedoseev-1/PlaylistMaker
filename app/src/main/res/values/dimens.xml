@@ -42,5 +42,7 @@
 
     <dimen name="contentInsetStartWithNavigation">64dp</dimen>
 
+    <dimen name="add_image_playlist_margin_top">26dp</dimen>
+    <dimen name="add_image_playlist_margin_horizontal">24dp</dimen>
 
 </resources>
