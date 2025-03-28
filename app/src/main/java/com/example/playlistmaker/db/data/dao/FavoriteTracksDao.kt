@@ -5,7 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.playlistmaker.db.data.FavoriteTracksEntity
+import com.example.playlistmaker.db.data.entity.FavoriteTracksEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao

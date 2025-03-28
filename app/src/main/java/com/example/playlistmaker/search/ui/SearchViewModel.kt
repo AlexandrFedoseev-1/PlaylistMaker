@@ -17,7 +17,7 @@ class SearchViewModel(private val tracksInteractor: TracksInteractor) : ViewMode
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
 
-    private val searchScreenStateLiveData = MutableLiveData<ScreenState>()
+    private val searchScreenStateLiveData = MutableLiveData<ScreenState>(ScreenState.Empty)
     val screenState: LiveData<ScreenState> get() = searchScreenStateLiveData
 
     private var latestSearchText: String? = null
@@ -27,7 +27,6 @@ class SearchViewModel(private val tracksInteractor: TracksInteractor) : ViewMode
 
     init {
         loadSearchHistory()
-        setEmptyState()
     }
 
     fun clearHistory() {
@@ -69,15 +68,19 @@ class SearchViewModel(private val tracksInteractor: TracksInteractor) : ViewMode
         }
     }
 
-    private  fun handleSearchResult(tracks: List<Track>?, errorMessage: String?) {
+    private fun handleSearchResult(tracks: List<Track>?, errorMessage: String?) {
         when {
-            tracks.isNullOrEmpty() -> searchScreenStateLiveData.postValue(
-                ScreenState.Placeholder(ScreenState.NOT_FOUND)
-            )
-
-            errorMessage != null -> searchScreenStateLiveData.postValue(
-                ScreenState.Placeholder(ScreenState.NO_INTERNET)
-            )
+            tracks.isNullOrEmpty() -> {
+                if (errorMessage == "Произошла сетевая ошибка") {
+                    searchScreenStateLiveData.postValue(
+                        ScreenState.Placeholder(ScreenState.NO_INTERNET)
+                    )
+                } else {
+                    searchScreenStateLiveData.postValue(
+                        ScreenState.Placeholder(ScreenState.NOT_FOUND)
+                    )
+                }
+            }
 
             else -> searchScreenStateLiveData.postValue(ScreenState.SearchResults(tracks))
         }
@@ -98,12 +101,14 @@ class SearchViewModel(private val tracksInteractor: TracksInteractor) : ViewMode
     }
 
     fun loadSearchHistory() {
-        viewModelScope.launch {  tracksInteractor.getSearchHistory().collect{trackHistory ->
-            history = ArrayList(trackHistory)
-            if (searchScreenStateLiveData.value is ScreenState.SearchHistory) {
-                searchScreenStateLiveData.value = ScreenState.SearchHistory(history)
+        viewModelScope.launch {
+            tracksInteractor.getSearchHistory().collect { trackHistory ->
+                history = ArrayList(trackHistory)
+                if (searchScreenStateLiveData.value is ScreenState.SearchHistory) {
+                    searchScreenStateLiveData.value = ScreenState.SearchHistory(history)
+                }
             }
-        } }
+        }
 
     }
 

@@ -1,6 +1,7 @@
-package com.example.playlistmaker.db.data
+package com.example.playlistmaker.db.data.repositories
 
-import com.example.playlistmaker.db.TrackEntityMapper
+import com.example.playlistmaker.db.mappers.TrackEntityMapper
+import com.example.playlistmaker.db.data.AppDatabase
 import com.example.playlistmaker.db.domain.api.FavoriteTracksRepository
 import com.example.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.flow.Flow

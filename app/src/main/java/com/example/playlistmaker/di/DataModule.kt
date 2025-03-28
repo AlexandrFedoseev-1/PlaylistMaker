@@ -4,14 +4,18 @@ import android.content.Context
 import android.media.MediaPlayer
 import androidx.room.Room
 import com.example.playlistmaker.App
-import com.example.playlistmaker.db.TrackEntityMapper
+import com.example.playlistmaker.db.mappers.TrackEntityMapper
 import com.example.playlistmaker.player.data.MediaPlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.api.AudioPlayer
 import com.example.playlistmaker.search.data.NetworkClient
 import com.example.playlistmaker.search.data.SearchHistoryLocalDataSource
 import com.example.playlistmaker.db.data.AppDatabase
-import com.example.playlistmaker.db.data.FavoriteTracksRepositoryImp
+import com.example.playlistmaker.db.data.repositories.FavoriteTracksRepositoryImp
+import com.example.playlistmaker.db.data.repositories.PlaylistRepositoryImpl
 import com.example.playlistmaker.db.domain.api.FavoriteTracksRepository
+import com.example.playlistmaker.db.domain.api.PlaylistRepository
+import com.example.playlistmaker.db.mappers.AddTracksEntityMapper
+import com.example.playlistmaker.db.mappers.PlaylistEntityMapper
 import com.example.playlistmaker.search.data.network.RetrofitNetworkClient
 import com.example.playlistmaker.search.data.network.TrackSearchApi
 import com.example.playlistmaker.search.data.network.TracksRepositoryImpl
@@ -90,13 +94,22 @@ val dataModule = module {
 //    DataBase
 
     single {
-        Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db").build()
+        Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
+            .fallbackToDestructiveMigration().build()
     }
 
     factory { TrackEntityMapper() }
 
+    factory { PlaylistEntityMapper() }
+
+    factory { AddTracksEntityMapper() }
+
     single<FavoriteTracksRepository> {
         FavoriteTracksRepositoryImp(get(), get())
+    }
+
+    single<PlaylistRepository> {
+        PlaylistRepositoryImpl(get(), get(), get())
     }
 
 //    Gson

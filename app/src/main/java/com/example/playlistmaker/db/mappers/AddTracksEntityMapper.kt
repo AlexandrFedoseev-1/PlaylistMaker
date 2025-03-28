@@ -1,11 +1,11 @@
-package com.example.playlistmaker.db
+package com.example.playlistmaker.db.mappers
 
-import com.example.playlistmaker.db.data.FavoriteTracksEntity
+import com.example.playlistmaker.db.data.entity.AddTracksToPlaylistsEntity
 import com.example.playlistmaker.search.domain.models.Track
 
-class TrackEntityMapper {
-    fun map(track: Track): FavoriteTracksEntity {
-        return FavoriteTracksEntity(
+class AddTracksEntityMapper {
+    fun map(track: Track): AddTracksToPlaylistsEntity {
+        return AddTracksToPlaylistsEntity(
             track.trackId,
             track.trackName,
             track.artistName,
@@ -19,7 +19,7 @@ class TrackEntityMapper {
         )
     }
 
-    fun map(track: FavoriteTracksEntity): Track {
+    fun map(track: AddTracksToPlaylistsEntity): Track {
         return Track(
             track.trackId,
             track.trackName,

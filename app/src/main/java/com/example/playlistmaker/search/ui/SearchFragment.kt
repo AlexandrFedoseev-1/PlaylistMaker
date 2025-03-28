@@ -1,10 +1,10 @@
 package com.example.playlistmaker.search.ui
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,16 +13,16 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.debounce
-import com.example.playlistmaker.player.ui.AudioPlayerActivity
 import com.example.playlistmaker.search.domain.models.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class SearchFragment : Fragment() {
-    private var savedText: String? = null
+    private var savedText: String = ""
     private val viewModel by viewModel<SearchViewModel>()
 
     private val searchAdapter by lazy {
@@ -57,15 +57,16 @@ class SearchFragment : Fragment() {
         binding.historySearchList.adapter = historyAdapter
 
         onTrackClickDebounce =
-            debounce<Track>(
+            debounce(
                 CLICK_DEBOUNCE_DELAY,
                 viewLifecycleOwner.lifecycleScope,
                 false
             ) { track ->
                 viewModel.addToSearchHistory(track)
-                val intent = Intent(requireActivity(), AudioPlayerActivity::class.java)
-                intent.putExtra(TRACK, track)
-                startActivity(intent)
+                val action =
+                    SearchFragmentDirections.actionSearchFragmentToAudioPlayerFragment(track)
+                findNavController().navigate(action)
+
             }
 
 
@@ -113,7 +114,7 @@ class SearchFragment : Fragment() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                savedText = s?.toString()
+                savedText = s.toString()
             }
 
         }
@@ -148,17 +149,11 @@ class SearchFragment : Fragment() {
         viewModel.loadSearchHistory()
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString(SAVED_TEXT, savedText)
-    }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
-        savedText = savedInstanceState?.getString("savedText")
         binding.search.setText(savedText)
     }
-
 
 
     private fun showMessage(massage: String) {
@@ -184,17 +179,20 @@ class SearchFragment : Fragment() {
     }
 
     private fun searchHistoryLayoutVisibility(s: CharSequence?) {
-        if (binding.search.hasFocus() && s.isNullOrEmpty()) {
-            viewModel.showHistory()
+        if (!binding.search.hasFocus()) {
+            Log.d("SearchFragment", "Field is not focused – skip state change")
+            return
+        }
 
+        if (s.isNullOrEmpty()) {
+            viewModel.showHistory()
         } else {
             viewModel.setEmptyState()
+            Log.d("SearchFragment", "searchHistoryLayoutVisibility: setEmptyState called")
         }
     }
 
     companion object {
-        const val SAVED_TEXT = "SAVED_TEXT"
-        const val TRACK = "TRACK"
         private const val CLICK_DEBOUNCE_DELAY = 300L
         fun newInstance() =
             SearchFragment()

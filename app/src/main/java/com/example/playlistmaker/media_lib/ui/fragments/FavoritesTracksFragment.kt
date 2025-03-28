@@ -1,6 +1,6 @@
 package com.example.playlistmaker.media_lib.ui.fragments
 
-import android.content.Intent
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,15 +8,13 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 
 import com.example.playlistmaker.databinding.FragmentFavoritesTracksBinding
 import com.example.playlistmaker.debounce
 import com.example.playlistmaker.media_lib.ui.FavoriteAdapter
 import com.example.playlistmaker.media_lib.ui.fragments.viewModel.FavoritesTracksViewModel
-import com.example.playlistmaker.player.ui.AudioPlayerActivity
 import com.example.playlistmaker.search.domain.models.Track
-import com.example.playlistmaker.search.ui.ScreenState
-import com.example.playlistmaker.search.ui.SearchFragment.Companion.TRACK
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FavoritesTracksFragment : Fragment() {
@@ -46,14 +44,13 @@ class FavoritesTracksFragment : Fragment() {
         binding.favoriteTracks.adapter = favoriteAdapter
 
         onTrackClickDebounce =
-            debounce<Track>(
+            debounce(
                 CLICK_DEBOUNCE_DELAY,
                 viewLifecycleOwner.lifecycleScope,
                 false
             ) { track ->
-                val intent = Intent(requireActivity(), AudioPlayerActivity::class.java)
-                intent.putExtra(TRACK, track)
-                startActivity(intent)
+                val action = FavoritesTracksFragmentDirections.actionGlobalAudioPlayerFragment(track)
+                findNavController().navigate(action)
             }
 
         viewModel.favoriteState.observe(viewLifecycleOwner){ state ->

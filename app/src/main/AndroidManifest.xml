@@ -16,11 +16,8 @@
         android:theme="@style/Theme.PlaylistMaker"
         tools:targetApi="31">
         <activity
-            android:name="com.example.playlistmaker.player.ui.AudioPlayerActivity"
-            android:exported="false" />
-        <activity
             android:name="com.example.playlistmaker.main.ui.MainActivity"
-            android:windowSoftInputMode="adjustNothing"
+            android:windowSoftInputMode="adjustPan"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,8 +1,12 @@
+
+
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("kotlin-parcelize")
     id ("kotlin-kapt")
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -45,7 +49,11 @@ android {
 
 dependencies {
 
-    implementation("androidx.room:room-runtime:2.6.1") // библиотека Room
+
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.legacy:legacy-support-v4:1.0.0")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1") // библиотека Room
     kapt("androidx.room:room-compiler:2.6.1") // Kotlin-кодогенератор
     implementation("androidx.room:room-ktx:2.6.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
@@ -56,7 +64,7 @@ dependencies {
     implementation ("io.insert-koin:koin-android:3.3.0")
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.11.0")
+    implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.activity:activity:1.9.2")
     testImplementation("junit:junit:4.13.2")
