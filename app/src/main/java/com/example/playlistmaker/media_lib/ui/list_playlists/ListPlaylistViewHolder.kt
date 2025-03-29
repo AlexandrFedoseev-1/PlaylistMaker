@@ -7,7 +7,7 @@ import com.example.playlistmaker.databinding.PlaylistItemBinding
 import com.example.playlistmaker.media_lib.domain.model.Playlist
 
 
-class PlaylistViewHolder(private val binding: PlaylistItemBinding) :
+class ListPlaylistViewHolder(private val binding: PlaylistItemBinding) :
     RecyclerView.ViewHolder(binding.root) {
     fun bind(playlist: Playlist) {
         binding.playlistName.text = playlist.name
