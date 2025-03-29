@@ -1,4 +1,4 @@
-package com.example.playlistmaker.media_lib.ui.fragments.viewModel
+package com.example.playlistmaker.media_lib.ui.add_playlist
 
 import android.content.Context
 import android.net.Uri

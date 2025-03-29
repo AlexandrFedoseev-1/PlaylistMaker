@@ -1,4 +1,4 @@
-package com.example.playlistmaker.media_lib.ui.fragments
+package com.example.playlistmaker.media_lib.ui.add_playlist
 
 import android.app.AlertDialog
 import android.os.Bundle
@@ -20,7 +20,6 @@ import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentAddPlaylistBinding
 import com.example.playlistmaker.media_lib.domain.model.Playlist
-import com.example.playlistmaker.media_lib.ui.fragments.viewModel.AddPlaylistViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import org.koin.androidx.viewmodel.ext.android.viewModel

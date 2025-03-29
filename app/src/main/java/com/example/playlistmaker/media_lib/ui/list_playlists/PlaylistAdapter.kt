@@ -1,4 +1,4 @@
-package com.example.playlistmaker.media_lib.ui
+package com.example.playlistmaker.media_lib.ui.list_playlists
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/mediaLibFragment"
-        android:name="com.example.playlistmaker.media_lib.ui.fragments.MediaLibFragment"
+        android:name="com.example.playlistmaker.media_lib.ui.MediaLibFragment"
         android:label="fragment_media_lib"
         tools:layout="@layout/fragment_media_lib" >
         <action
@@ -34,7 +34,7 @@
         tools:layout="@layout/fragment_settings" />
     <fragment
         android:id="@+id/addPlaylistFragment"
-        android:name="com.example.playlistmaker.media_lib.ui.fragments.AddPlaylistFragment"
+        android:name="com.example.playlistmaker.media_lib.ui.add_playlist.AddPlaylistFragment"
         android:label="fragment_add_playlist"
         tools:layout="@layout/fragment_add_playlist" />
     <fragment
@@ -51,7 +51,7 @@
     </fragment>
     <fragment
         android:id="@+id/favoritesTracksFragment"
-        android:name="com.example.playlistmaker.media_lib.ui.fragments.FavoritesTracksFragment"
+        android:name="com.example.playlistmaker.media_lib.ui.favorites.FavoritesTracksFragment"
         android:label="fragment_favorites_tracks"
         tools:layout="@layout/fragment_favorites_tracks" >
     </fragment>

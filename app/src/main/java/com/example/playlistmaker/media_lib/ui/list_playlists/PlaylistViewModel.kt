@@ -1,4 +1,4 @@
-package com.example.playlistmaker.media_lib.ui.fragments.viewModel
+package com.example.playlistmaker.media_lib.ui.list_playlists
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

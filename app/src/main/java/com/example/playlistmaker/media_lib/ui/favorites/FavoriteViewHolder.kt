@@ -1,4 +1,4 @@
-package com.example.playlistmaker.media_lib.ui
+package com.example.playlistmaker.media_lib.ui.favorites
 
 
 import androidx.recyclerview.widget.RecyclerView

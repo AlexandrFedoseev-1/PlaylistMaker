@@ -1,4 +1,4 @@
-package com.example.playlistmaker.media_lib.ui.fragments
+package com.example.playlistmaker.media_lib.ui.favorites
 
 
 import android.os.Bundle
@@ -12,8 +12,6 @@ import androidx.navigation.fragment.findNavController
 
 import com.example.playlistmaker.databinding.FragmentFavoritesTracksBinding
 import com.example.playlistmaker.debounce
-import com.example.playlistmaker.media_lib.ui.FavoriteAdapter
-import com.example.playlistmaker.media_lib.ui.fragments.viewModel.FavoritesTracksViewModel
 import com.example.playlistmaker.search.domain.models.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
