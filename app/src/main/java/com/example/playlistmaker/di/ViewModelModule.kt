@@ -1,5 +1,6 @@
 package com.example.playlistmaker.di
 
+import com.example.playlistmaker.media_lib.ui.fragments.viewModel.AddPlaylistViewModel
 import com.example.playlistmaker.media_lib.ui.fragments.viewModel.FavoritesTracksViewModel
 import com.example.playlistmaker.media_lib.ui.fragments.viewModel.PlaylistViewModel
 import com.example.playlistmaker.player.ui.AudioPlayerViewModel
@@ -18,7 +19,7 @@ val viewModelModule = module {
     }
 
     viewModel{
-        AudioPlayerViewModel(get(), favoriteTracks = get() )
+        AudioPlayerViewModel(get(), favoriteTracks = get(), get() )
     }
 
     viewModel {
@@ -26,6 +27,12 @@ val viewModelModule = module {
     }
 
     viewModel{
-        PlaylistViewModel()
+        PlaylistViewModel(get())
     }
+
+    viewModel {
+        AddPlaylistViewModel(get())
+    }
+
+
 }

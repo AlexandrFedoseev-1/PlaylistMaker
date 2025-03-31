@@ -6,8 +6,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.db.domain.api.FavoriteTracksInteractor
+import com.example.playlistmaker.db.domain.api.PlaylistInteractor
+import com.example.playlistmaker.media_lib.domain.model.Playlist
+import com.example.playlistmaker.player.AddPlaylistResult
 import com.example.playlistmaker.player.domain.api.AudioPlayerInteractor
 import com.example.playlistmaker.search.domain.models.Track
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -15,7 +19,8 @@ import kotlinx.coroutines.launch
 
 class AudioPlayerViewModel(
     private val player: AudioPlayerInteractor,
-    private val favoriteTracks: FavoriteTracksInteractor
+    private val favoriteTracks: FavoriteTracksInteractor,
+    private val playlistInteractor: PlaylistInteractor
 ) : ViewModel() {
 
     private var timerJob: Job? = null
@@ -29,6 +34,35 @@ class AudioPlayerViewModel(
 
     private val _isFavoriteLiveData = MutableLiveData<Boolean>()
     val isFavoriteLiveData: LiveData<Boolean> get() = _isFavoriteLiveData
+
+    private val _playlists = MutableLiveData<List<Playlist>>(mutableListOf())
+    val playlists: LiveData<List<Playlist>> get() = _playlists
+
+    private val _addTrackStatus = MutableLiveData<AddPlaylistResult>()
+    val addTrackStatus: LiveData<AddPlaylistResult> get() = _addTrackStatus
+
+    init {
+        getPlaylists()
+    }
+
+    private fun getPlaylists() {
+        viewModelScope.launch(Dispatchers.IO) {
+            playlistInteractor.getPlaylist().collect { listPlaylist ->
+                _playlists.postValue(listPlaylist)
+            }
+        }
+    }
+
+    fun addTrackToPlaylist(track: Track, playlist: Playlist) {
+        if (playlist.tracksId.contains(trackId)) {
+            _addTrackStatus.postValue(AddPlaylistResult.Error(playlist.name))
+        } else {
+            viewModelScope.launch(Dispatchers.IO) {
+                if (playlistInteractor.addTrackToPlaylist(track, playlist))
+                    _addTrackStatus.postValue(AddPlaylistResult.Success(playlist.name))
+            }
+        }
+    }
 
     fun setValues(trackId: String, previewUrl: String) {
         this.previewUrl = previewUrl
@@ -108,7 +142,6 @@ class AudioPlayerViewModel(
     }
 
     companion object {
-
         const val DELAY = 300L
     }
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="ButtonStyle" parent="Widget.MaterialComponents.Button.UnelevatedButton">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/zero</item>
@@ -15,7 +16,8 @@
         <item name="android:insetBottom">@dimen/zero</item>
         <item name="fontFamily">@font/ys_display_medium</item>
     </style>
-    <style name="SettingsTextStyle" >
+
+    <style name="SettingsTextStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/setting_height</item>
         <item name="android:gravity">center_vertical</item>
@@ -23,6 +25,7 @@
         <item name="android:textSize">@dimen/text_size</item>
         <item name="fontFamily">@font/ys_display_regular</item>
     </style>
+
     <style name="LittleButtonStyle" parent="Widget.MaterialComponents.Button.UnelevatedButton">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -42,6 +45,7 @@
         <item name="android:paddingBottom">10dp</item>
         <item name="android:minHeight">36dp</item>
     </style>
+
     <style name="AudioPlayerTextInfo">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">32dp</item>
@@ -50,6 +54,7 @@
         <item name="android:textSize">@dimen/track_info_text_size</item>
         <item name="fontFamily">@font/ys_display_regular</item>
     </style>
+
     <style name="AudioPlayerTextInfoChanged">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">32dp</item>
@@ -60,6 +65,7 @@
         <item name="android:ellipsize">end</item>
         <item name="android:maxLines">1</item>
     </style>
+
     <style name="AudioPlayerTextNameAndArtist">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
@@ -84,7 +90,7 @@
         <item name="android:textColor">?attr/colorOnPrimary</item>
     </style>
 
-    <style name="TabLayoutStyle" >
+    <style name="TabLayoutStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/tabLayout_height</item>
         <item name="android:background">?attr/colorPrimary</item>
@@ -95,12 +101,12 @@
         <item name="tabSelectedTextColor">?attr/colorOnPrimary</item>
     </style>
 
-    <style name="TabLayoutTextStyle" >
+    <style name="TabLayoutTextStyle">
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:textSize">@dimen/tabLayout_text_size</item>
     </style>
 
-    <style name="PlaceholderTextStyle" >
+    <style name="PlaceholderTextStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:drawablePadding">@dimen/text_margin</item>
@@ -113,5 +119,57 @@
     <style name="BottomNavigationViewTextStyle">
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textSize">@dimen/bnv_text_size</item>
+    </style>
+
+    <style name="AddPlaylistInputTextStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginHorizontal">@dimen/padding</item>
+        <item name="android:textColorHint">?attr/colorOnPrimary</item>
+        <item name="boxStrokeColor">@color/box_stroke_color_add_playlist</item>
+        <item name="hintTextColor">@color/input_hint_color</item>
+        <item name="hintTextAppearance">@style/HintTextStyle</item>
+        <item name="boxCollapsedPaddingTop">0dp</item>
+        <item name="cursorColor">?attr/colorOnPrimary</item>
+    </style>
+    <style name="HintTextStyle" parent="TextAppearance.MaterialComponents.Body2">
+        <item name="android:textSize">@dimen/bnv_text_size</item>
+        <item name="fontFamily">@font/ys_display_regular</item>
+
+    </style>
+
+    <style name="AddPlaylistInputTextStyle.InputEditText" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+        <item name="android:textSize">@dimen/text_size</item>
+        <item name="fontFamily">@font/ys_display_regular</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="cursorColor">?attr/colorOnPrimary</item>
+    </style>
+
+    <style name="CreatePlaylistButtonStyle" parent ="Widget.AppCompat.Button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">44dp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/text_size</item>
+        <item name="fontFamily">@font/ys_display_medium</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:text">@string/playlist_create</item>
+        <item name="android:background">@drawable/create_playlist_button</item>
+    </style>
+
+    <style name="circleImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
+    </style>
+
+    <style name="PlaylistItem">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
     </style>
 </resources>

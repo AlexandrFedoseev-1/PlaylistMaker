@@ -3,10 +3,8 @@ package com.example.playlistmaker.media_lib.ui
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FavoriteTrackItemBinding
 import com.example.playlistmaker.search.domain.models.Track
-import com.example.playlistmaker.search.ui.SearchViewHolder
 
 class FavoriteAdapter(private val tracks: MutableList<Track> = mutableListOf(),
                       private val onTrackClick: (Track) -> Unit
