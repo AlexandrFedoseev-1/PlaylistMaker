@@ -15,7 +15,7 @@ import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.BottomSheetPlaylistsBinding
+import com.example.playlistmaker.databinding.BottomSheetListPlaylistsBinding
 import com.example.playlistmaker.databinding.FragmentAudioPlayerBinding
 import com.example.playlistmaker.debounce
 import com.example.playlistmaker.media_lib.domain.model.Playlist
@@ -31,7 +31,7 @@ class AudioPlayerFragment : Fragment() {
     private val viewModel by viewModel<AudioPlayerViewModel>()
 
     private lateinit var binding: FragmentAudioPlayerBinding
-    private lateinit var bottomSheetBinding: BottomSheetPlaylistsBinding
+    private lateinit var bottomSheetBinding: BottomSheetListPlaylistsBinding
 
     private lateinit var onPlaylistClickDebounce: (Playlist) -> Unit
     private val args: AudioPlayerFragmentArgs by navArgs()
@@ -49,7 +49,7 @@ class AudioPlayerFragment : Fragment() {
     ): View {
         binding = FragmentAudioPlayerBinding.inflate(inflater, container, false)
         bottomSheetBinding =
-            BottomSheetPlaylistsBinding.bind(binding.root.findViewById(R.id.bottom_sheet_new_playlist))
+            BottomSheetListPlaylistsBinding.bind(binding.root.findViewById(R.id.bottom_sheet_new_playlist))
 
         return binding.root
 
@@ -108,11 +108,16 @@ class AudioPlayerFragment : Fragment() {
         viewModel.addTrackStatus.observe(viewLifecycleOwner) { status ->
             when (status) {
                 is AddPlaylistResult.Success -> {
-                    showSnackBar(getString(R.string.add_track_to_playlist) + " '${status.message}'")
+                    showSnackBar(getString(R.string.add_track_to_playlist, status.message))
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                 }
 
-                is AddPlaylistResult.Error -> showSnackBar(getString(R.string.already_add) + " '${status.message}'")
+                is AddPlaylistResult.Error -> showSnackBar(
+                    getString(
+                        R.string.already_add,
+                        status.message
+                    )
+                )
             }
         }
 
@@ -162,19 +167,6 @@ class AudioPlayerFragment : Fragment() {
             }
         })
     }
-
-//    private fun setupRecyclerView() {
-//        playlistAdapterPlayer = BottomSheetPlaylistAdapter { playlist ->
-//            val track = viewModel.trackInfo.value ?: return@BottomSheetPlaylistAdapter
-//            viewModel.addTrackToPlaylist(track, playlist.id)
-//        }
-//
-//
-//        bottomSheetBinding.rvPlaylists.apply {
-//            layoutManager = LinearLayoutManager(requireContext())
-//            adapter = playlistAdapter
-//        }
-//    }
 
 
     private fun setupTrackInfo(trackData: Track?) {

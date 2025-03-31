@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 
-class AddPlaylistViewModel(private val playlistInteractor: PlaylistInteractor) : ViewModel() {
+open class AddPlaylistViewModel(private val playlistInteractor: PlaylistInteractor) : ViewModel() {
 
     fun createPlaylist(playlist: Playlist) {
         viewModelScope.launch {

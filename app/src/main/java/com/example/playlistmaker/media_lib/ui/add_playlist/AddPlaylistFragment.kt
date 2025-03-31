@@ -24,15 +24,15 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class AddPlaylistFragment : Fragment() {
+open class AddPlaylistFragment : Fragment() {
 
     companion object {
         fun newInstance() = AddPlaylistFragment()
     }
-
-    private lateinit var binding: FragmentAddPlaylistBinding
-    private val viewModel by viewModel<AddPlaylistViewModel>()
-    private var coverImagePath: String? = null
+    private var _binding: FragmentAddPlaylistBinding? = null
+    val binding get() = _binding!!
+    protected open val viewModel by viewModel<AddPlaylistViewModel>()
+    protected var coverImagePath: String? = null
     private val pickMedia =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             //обрабатываем событие выбора пользователем фотографии
@@ -50,7 +50,7 @@ class AddPlaylistFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentAddPlaylistBinding.inflate(inflater, container, false)
+        _binding = FragmentAddPlaylistBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -58,6 +58,14 @@ class AddPlaylistFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.toolbar.setNavigationOnClickListener { backClick() }
 
+        setupCommonUI()
+
+        binding.createButton.setOnClickListener {
+            savePlaylist()
+        }
+    }
+
+    protected fun setupCommonUI() {
         binding.addImagePlaylist.setOnClickListener {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
@@ -67,12 +75,7 @@ class AddPlaylistFragment : Fragment() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             backClick()
         }
-
-        binding.createButton.setOnClickListener {
-            savePlaylist()
-        }
     }
-
     private fun savePlaylist() {
         val name = binding.playlistName.text?.toString()?.trim()
         val description = binding.playlistDescription.text?.toString()?.trim() ?: ""
@@ -98,7 +101,7 @@ class AddPlaylistFragment : Fragment() {
         findNavController().navigateUp()
     }
 
-    private fun showSnackBar(message: String?) {
+    protected fun showSnackBar(message: String?) {
         message?.let {
             val snackbar = Snackbar.make(binding.root, it, Snackbar.LENGTH_LONG)
             val textView =
@@ -133,7 +136,7 @@ class AddPlaylistFragment : Fragment() {
                 coverImagePath != null
     }
 
-    private fun backClick() {
+    protected open fun backClick() {
         if (isDataModified()) {
             confirmDialog()
         } else {

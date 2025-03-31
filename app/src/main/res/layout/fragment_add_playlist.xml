@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorPrimary"
-
     tools:context=".media_lib.ui.add_playlist.AddPlaylistFragment">
 
     <com.google.android.material.appbar.MaterialToolbar

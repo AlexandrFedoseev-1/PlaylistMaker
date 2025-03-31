@@ -6,7 +6,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.databinding.PlaylistItemBinding
 import com.example.playlistmaker.media_lib.domain.model.Playlist
 
-class ListPlaylistAdapter(private val playlists: MutableList<Playlist> = mutableListOf()) :
+
+class ListPlaylistAdapter(
+    private val playlists: MutableList<Playlist> = mutableListOf(),
+    private val onTrackClick: (Playlist) -> Unit
+) :
     RecyclerView.Adapter<ListPlaylistViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListPlaylistViewHolder {
@@ -17,11 +21,15 @@ class ListPlaylistAdapter(private val playlists: MutableList<Playlist> = mutable
 
     override fun onBindViewHolder(holder: ListPlaylistViewHolder, position: Int) {
         holder.bind(playlists[position])
+        holder.itemView.setOnClickListener {
+            onTrackClick(playlists[position])
+        }
     }
 
     override fun getItemCount(): Int {
         return playlists.size
     }
+
     fun updateData(newPlaylists: List<Playlist>) {
         playlists.clear()
         playlists.addAll(newPlaylists)

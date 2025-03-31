@@ -36,7 +36,15 @@
     <string name="complete">Завершить</string>
     <string name="playlist_create">Создать</string>
     <string name="add_on_playlist_bottom_sheet">Добавить в плейлист</string>
-    <string name="already_add">Трек уже добавлен в плейлист </string>
-    <string name="add_track_to_playlist">Добавлено в плейлист  </string>
+    <string name="already_add">Трек уже добавлен в плейлист %s</string>
+    <string name="add_track_to_playlist">Добавлено в плейлист %s</string>
+    <string name="empty_playlist">Плейлист пуст</string>
+    <string name="all_time_and_count_playlist">%s минут • %s треков</string>
+    <string name="tracks_count_playlist">%d треков</string>
+    <string name="emptyTrackSend">В данном плейлисте нет треков для отправки</string>
+    <string name="share_playlist">Поделиться</string>
+    <string name="edit_playlist">Редактировать информацию</string>
+    <string name="delete_playlist">Удалить плейлист</string>
+    <string name="save_playlist">Сохранить</string>
 
 </resources>

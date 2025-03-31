@@ -1,5 +1,6 @@
 package com.example.playlistmaker.db.data.repositories
 
+import android.util.Log
 import com.example.playlistmaker.db.data.AppDatabase
 import com.example.playlistmaker.db.domain.api.PlaylistRepository
 import com.example.playlistmaker.db.mappers.AddTracksEntityMapper
@@ -20,7 +21,14 @@ class PlaylistRepositoryImpl(
     }
 
     override suspend fun deletePlaylist(playlist: Playlist) {
-        appDatabase.playlistDao().deletePlaylist(playlistEntityMapper.map(playlist))
+        try {
+            appDatabase.playlistDao().deletePlaylist(playlistEntityMapper.map(playlist))
+        } catch (e: Exception) {
+            Log.e("PlaylistRepo", "Error deleting playlist", e)
+        }
+        playlist.tracksId.forEach {
+            checkTrack(it)
+        }
     }
 
     override suspend fun updatePlaylist(playlist: Playlist) {
@@ -28,27 +36,54 @@ class PlaylistRepositoryImpl(
     }
 
     override fun getPlaylist(): Flow<List<Playlist>> =
-         appDatabase.playlistDao().getPlaylist().map { playlistEntity ->
-             playlistEntity.map { playlistEntityMapper.map(it) }
-         }
+        appDatabase.playlistDao().getPlaylist().map { playlistEntity ->
+            playlistEntity.map { playlistEntityMapper.map(it) }
+        }
 
-
-    override suspend fun getPlaylistTracksId(): List<String> {
-        return appDatabase.playlistDao().getPlaylistTracksId()
+    override fun getTracksFromPlaylist(playlistTracksId: List<String>): Flow<List<Track>> {
+        return appDatabase.addTracksToPlaylistsDao().getTracksById(playlistTracksId)
+            .map { tracks -> tracks.map { addTracksEntityMapper.map(it) } }
     }
-    override suspend fun addTrackToPlaylist(track:Track, playlist: Playlist) : Boolean {
+
+//    override suspend fun getPlaylistTracksId(): List<String> {
+//        return appDatabase.playlistDao().getPlaylistTracksId()
+//    }
+
+    override fun getPlaylistById(playlistId: Int): Flow<Playlist>{
+        return appDatabase.playlistDao().getPlaylistById(playlistId).map { playlistEntityMapper.map(it) }
+    }
+
+    override suspend fun deleteTrackFromPlaylist(trackId: String, playlist: Playlist) {
+        val updatedTracksId = playlist.tracksId.toMutableList().apply {
+            remove(trackId)
+        }
+        val updatedPlaylist = playlist.copy(
+            tracksId = updatedTracksId,
+            tracksCount = updatedTracksId.size
+        )
+        appDatabase.playlistDao().updatePlaylist(playlistEntityMapper.map(updatedPlaylist))
+        checkTrack(trackId)
+    }
+    private suspend fun checkTrack(trackId: String){
+        val allTracksId = appDatabase.playlistDao().getAllPlaylist().flatMap { it.tracksId }
+        if (!allTracksId.contains(trackId)){
+            appDatabase.addTracksToPlaylistsDao().deleteTrackById(trackId)
+        }
+    }
+
+    override suspend fun addTrackToPlaylist(track: Track, playlist: Playlist): Boolean {
         try {
             val updatedTracksId = playlist.tracksId.toMutableList().apply {
                 add(track.trackId)
             }
             val updatedPlaylist = playlist.copy(
                 tracksId = updatedTracksId,
-                tracksCount = playlist.tracksCount + 1
+                tracksCount = updatedTracksId.size
             )
             updatePlaylist(updatedPlaylist)
             appDatabase.addTracksToPlaylistsDao().insertTrack(addTracksEntityMapper.map(track))
             return true
-        }catch (e:Exception){
+        } catch (e: Exception) {
             return true
         }
 
