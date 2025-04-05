@@ -3,6 +3,7 @@ package com.example.playlistmaker.media_lib.ui.list_playlists
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.DiffUtilUpdate
 import com.example.playlistmaker.databinding.PlaylistItemBinding
 import com.example.playlistmaker.media_lib.domain.model.Playlist
 
@@ -31,8 +32,16 @@ class ListPlaylistAdapter(
     }
 
     fun updateData(newPlaylists: List<Playlist>) {
-        playlists.clear()
-        playlists.addAll(newPlaylists)
-        notifyDataSetChanged()
+        DiffUtilUpdate(
+            oldList = playlists,
+            newList = newPlaylists,
+            adapter = this,
+            areItemsTheSame = { old, new -> old.playlistId == new.playlistId },
+            areContentsTheSame = { old, new -> old == new },
+            updateData = {
+                playlists.clear()
+                playlists.addAll(it)
+            }
+        ).dispatch()
     }
 }

@@ -3,6 +3,7 @@ package com.example.playlistmaker.media_lib.ui.favorites
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.DiffUtilUpdate
 import com.example.playlistmaker.databinding.FavoriteTrackItemBinding
 import com.example.playlistmaker.search.domain.models.Track
 
@@ -26,8 +27,16 @@ class FavoriteAdapter(private val tracks: MutableList<Track> = mutableListOf(),
     }
 
     fun updateData(newTracks: List<Track>) {
-        tracks.clear()
-        tracks.addAll(newTracks)
-        notifyDataSetChanged()
+        DiffUtilUpdate(
+            oldList = tracks,
+            newList = newTracks,
+            adapter = this,
+            areItemsTheSame = { old, new -> old.trackId == new.trackId },
+            areContentsTheSame = { old, new -> old == new },
+            updateData = {
+                tracks.clear()
+                tracks.addAll(it)
+            }
+        ).dispatch()
     }
 }

@@ -3,6 +3,7 @@ package com.example.playlistmaker.player
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.DiffUtilUpdate
 import com.example.playlistmaker.databinding.BottomSheetItemBinding
 import com.example.playlistmaker.media_lib.domain.model.Playlist
 
@@ -31,8 +32,16 @@ class BottomSheetPlaylistAdapter(
     }
 
     fun updateData(newPlaylists: List<Playlist>) {
-        playlists.clear()
-        playlists.addAll(newPlaylists)
-        notifyDataSetChanged()
+        DiffUtilUpdate(
+            oldList = playlists,
+            newList = newPlaylists,
+            adapter = this,
+            areItemsTheSame = { old, new -> old.playlistId == new.playlistId },
+            areContentsTheSame = { old, new -> old == new },
+            updateData = {
+                playlists.clear()
+                playlists.addAll(it)
+            }
+        ).dispatch()
     }
 }

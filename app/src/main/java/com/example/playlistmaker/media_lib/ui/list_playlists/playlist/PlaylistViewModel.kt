@@ -62,7 +62,7 @@ class PlaylistViewModel(private val playlistInteractor: PlaylistInteractor) : Vi
     fun getAllTracksTime(): String {
         val tracks = _tracksFromPlaylist.value ?: emptyList()
         val allTracksTime = tracks.sumOf { convertTimeToMillis(it.trackTime) }
-        return SimpleDateFormat("mm", Locale.getDefault()).format(Date(allTracksTime))
+        return SimpleDateFormat("m", Locale.getDefault()).format(Date(allTracksTime))
     }
 
     fun sharePlaylist(context: Context) {
@@ -76,8 +76,8 @@ class PlaylistViewModel(private val playlistInteractor: PlaylistInteractor) : Vi
     }
 
     private fun createShareMessage(): String {
-        val playlist = _playlist.value!!
-        val tracks = _tracksFromPlaylist.value!!
+        val playlist = _playlist.value ?: return "Плейлист отсутствует"
+        val tracks = _tracksFromPlaylist.value ?: return "Нет треков в плейлисте"
         val builder = StringBuilder()
 
         builder.append(playlist.name).append("\n")

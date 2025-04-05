@@ -3,6 +3,7 @@ package com.example.playlistmaker.media_lib.ui.list_playlists.playlist
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.DiffUtilUpdate
 import com.example.playlistmaker.databinding.FavoriteTrackItemBinding
 import com.example.playlistmaker.media_lib.ui.favorites.FavoriteViewHolder
 import com.example.playlistmaker.search.domain.models.Track
@@ -18,13 +19,14 @@ class PlaylistAdapter(
     }
 
     override fun onBindViewHolder(holder: FavoriteViewHolder, position: Int) {
-        holder.bind(tracks[position])
+        val track = tracks.getOrNull(position) ?: return
+        holder.bind(track)
         holder.itemView.setOnLongClickListener {
-            onLongTrackClick(tracks[position])
+            onLongTrackClick(track)
             true
         }
         holder.itemView.setOnClickListener {
-            onTrackClick(tracks[position])
+            onTrackClick(track)
         }
 
     }
@@ -34,8 +36,16 @@ class PlaylistAdapter(
     }
 
     fun updateData(newTracks: List<Track>) {
-        tracks.clear()
-        tracks.addAll(newTracks)
-        notifyDataSetChanged()
+        DiffUtilUpdate(
+            oldList = tracks,
+            newList = newTracks,
+            adapter = this,
+            areItemsTheSame = { old, new -> old.trackId == new.trackId },
+            areContentsTheSame = { old, new -> old == new },
+            updateData = {
+                tracks.clear()
+                tracks.addAll(it)
+            }
+        ).dispatch()
     }
 }

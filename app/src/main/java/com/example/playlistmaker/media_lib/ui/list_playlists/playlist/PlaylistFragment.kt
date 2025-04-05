@@ -94,7 +94,8 @@ class PlaylistFragment : Fragment() {
                 .placeholder(R.drawable.album_placeholder)
                 .into(bottomSheetPlaylistShareBinding.playlistImage)
             bottomSheetPlaylistShareBinding.playlistName.text = playlist.name
-            bottomSheetPlaylistShareBinding.tracksCount.text = getString(R.string.tracks_count_playlist,playlist.tracksCount)
+            bottomSheetPlaylistShareBinding.tracksCount.text =
+                getString(R.string.tracks_count_playlist, playlist.tracksCount)
         }
 
 
@@ -120,36 +121,42 @@ class PlaylistFragment : Fragment() {
 
         bottomSheetPlaylistShareBinding.deletePlaylist.setOnClickListener { showDeletePlaylistDialog() }
 
-        binding.playlistMoreButton.setOnClickListener { bottomSheetBehaviorMore.state = BottomSheetBehavior.STATE_COLLAPSED }
+        binding.playlistMoreButton.setOnClickListener {
+            bottomSheetBehaviorMore.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
 
         bottomSheetPlaylistShareBinding.editPlaylist.setOnClickListener {
-            val action = PlaylistFragmentDirections.actionPlaylistFragmentToEditPlaylistFragment(viewModel.playlist.value!!)
+            val action =
+                PlaylistFragmentDirections.actionPlaylistFragmentToEditPlaylistFragment(viewModel.playlist.value!!)
             findNavController().navigate(action)
         }
     }
 
     private fun showDeleteTrackDialog(track: Track) {
-        val dialog = MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Удалить трек")
-            .setMessage("Удалить трек из плейлиста?")
-            .setNegativeButton("Нет") { dialog, _ -> dialog.dismiss() }
-            .setPositiveButton("Да") { _, _ -> viewModel.deleteTrackFromPlaylist(track) }
-            .show()
-        dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
-            ?.setTextColor(ContextCompat.getColor(requireContext(), R.color.blue))
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-            ?.setTextColor(ContextCompat.getColor(requireContext(), R.color.blue))
+        val title = getString(R.string.delete_track_dialog_title, track.trackName)
+        val message = getString(R.string.delete_track_dialog_message)
+        showDialog(title,message){
+            viewModel.deleteTrackFromPlaylist(track)
+        }
     }
 
     private fun showDeletePlaylistDialog() {
         bottomSheetBehaviorMore.state = BottomSheetBehavior.STATE_HIDDEN
+        val title = getString(R.string.delete_playlist_dialog_title, viewModel.playlist.value?.name)
+        val message = getString(R.string.delete_playlist_dialog_message)
+        showDialog(title, message) {
+            viewModel.deletePlaylist(viewModel.playlist.value!!)
+            findNavController().navigateUp()
+        }
+    }
+
+    private fun showDialog(title: String, message: String, doThis: () -> Unit) {
         val dialog = MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Удалить плейлист \"${viewModel.playlist.value?.name}\"?")
-            .setMessage("Вы уверены, что хотите удалить этот плейлист?")
+            .setTitle(title)
+            .setMessage(message)
             .setNegativeButton("Нет") { dialog, _ -> dialog.dismiss() }
             .setPositiveButton("Да") { _, _ ->
-                viewModel.deletePlaylist(viewModel.playlist.value!!)
-                findNavController().navigateUp()
+                doThis()
             }
             .show()
 
@@ -178,7 +185,8 @@ class PlaylistFragment : Fragment() {
                 addBottomSheetCallback(object :
                     BottomSheetBehavior.BottomSheetCallback() {
                     override fun onStateChanged(bottomSheet: View, newState: Int) {
-                        binding.overlayPlaylistTrack.isVisible =  newState != BottomSheetBehavior.STATE_HIDDEN
+                        binding.overlayPlaylistTrack.isVisible =
+                            newState != BottomSheetBehavior.STATE_HIDDEN
                     }
 
                     override fun onSlide(bottomSheet: View, slideOffset: Float) {
@@ -194,7 +202,6 @@ class PlaylistFragment : Fragment() {
             val contentBottom = binding.constraintLayout.bottom
             val desiredPeekHeight = parentHeight - contentBottom
             bottomSheetBehaviorTracks.peekHeight = desiredPeekHeight
-//            bottomSheetBehaviorMore.peekHeight = parentHeight/2
         }
     }
 }
