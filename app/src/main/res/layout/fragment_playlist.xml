@@ -1,44 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinator_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingHorizontal="14dp"
-    >
+    android:background="@color/light_gray"
+    tools:context=".media_lib.ui.list_playlists.playlist.PlaylistFragment">
 
-    <Button
-        android:id="@+id/new_playlist_button"
-        style="@style/LittleButtonStyle"
-        android:text="@string/new_playlist"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraint_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/light_gray"
+        android:paddingBottom="@dimen/padding">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycleViewPlayList"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:clipToPadding="false"
-        android:paddingBottom="8dp"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:spanCount="2"
-        app:barrierMargin="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/new_playlist_button" />
+        <ImageView
+            android:id="@+id/image_playlist"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/album_placeholder"
+            android:scaleType="centerCrop"
+            app:layout_constraintDimensionRatio="h,1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
-    <TextView
-        android:id="@+id/placeholder"
-        style="@style/PlaceholderTextStyle"
-        android:layout_marginTop="46dp"
-        android:text="@string/playlist_placeholder"
-        app:drawableTopCompat="@drawable/not_found"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/new_playlist_button" />
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            style="@style/ToolbarStyle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:navigationIcon="@drawable/arrow_back"
+            android:background="#00000000" />
+        <TextView
+            android:id="@+id/playlist_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:fontFamily="@font/ys_display_medium"
+            android:paddingStart="16dp"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/image_playlist"
+            tools:text="Thunderstruck Will Come" />
+
+        <TextView
+            android:id="@+id/description_playlist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:fontFamily="@font/ys_display_regular"
+            android:paddingStart="16dp"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/playlist_name"
+            tools:text="Super STAR" />
+
+        <TextView
+            android:id="@+id/sum_time_playlist_and_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:fontFamily="@font/ys_display_regular"
+            android:paddingStart="16dp"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/description_playlist"
+            tools:text="00:45 • 10 tracks" />
+
+        <ImageButton
+            android:id="@+id/playlist_share_button"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/share_24"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sum_time_playlist_and_count" />
+
+        <ImageButton
+            android:id="@+id/playlist_more_button"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/more_vert_24"
+            app:layout_constraintStart_toEndOf="@+id/playlist_share_button"
+            app:layout_constraintTop_toBottomOf="@+id/sum_time_playlist_and_count" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/overlay_playlist_track"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#99000000"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/bottom_sheet_playlist"
+        layout="@layout/bottom_sheet_playlist" />
+
+    <include
+        android:id="@+id/bottom_sheet_playlist_share"
+        layout="@layout/bottom_sheet_playlist_share" />
 
 
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

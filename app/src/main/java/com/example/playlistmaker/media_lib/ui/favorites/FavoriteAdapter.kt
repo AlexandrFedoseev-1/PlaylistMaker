@@ -1,23 +1,21 @@
-package com.example.playlistmaker.search.ui
+package com.example.playlistmaker.media_lib.ui.favorites
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.DiffUtilUpdate
-import com.example.playlistmaker.R
+import com.example.playlistmaker.databinding.FavoriteTrackItemBinding
 import com.example.playlistmaker.search.domain.models.Track
 
-class SearchAdapter(
-    private val tracks: MutableList<Track> = mutableListOf(),
-    private val onTrackClick: (Track) -> Unit
-) : RecyclerView.Adapter<SearchViewHolder>() {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.search_track_item, parent, false)
-        return SearchViewHolder(view)
+class FavoriteAdapter(private val tracks: MutableList<Track> = mutableListOf(),
+                      private val onTrackClick: (Track) -> Unit
+) : RecyclerView.Adapter<FavoriteViewHolder>() {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteViewHolder {
+        val layoutInspector  = LayoutInflater.from(parent.context)
+        return FavoriteViewHolder(FavoriteTrackItemBinding.inflate(layoutInspector,parent,false))
     }
 
-    override fun onBindViewHolder(holder: SearchViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: FavoriteViewHolder, position: Int) {
         holder.bind(tracks[position])
         holder.itemView.setOnClickListener {
             onTrackClick(tracks[position])

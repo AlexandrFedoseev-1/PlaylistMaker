@@ -1,29 +1,29 @@
-package com.example.playlistmaker.player
+package com.example.playlistmaker.media_lib.ui.list_playlists
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.DiffUtilUpdate
-import com.example.playlistmaker.databinding.BottomSheetItemBinding
+import com.example.playlistmaker.databinding.PlaylistItemBinding
 import com.example.playlistmaker.media_lib.domain.model.Playlist
 
 
-class BottomSheetPlaylistAdapter(
+class ListPlaylistAdapter(
     private val playlists: MutableList<Playlist> = mutableListOf(),
-    private val onPlaylistClick: (Playlist) -> Unit
+    private val onTrackClick: (Playlist) -> Unit
 ) :
-    RecyclerView.Adapter<BottomSheetPlaylistViewHolder>() {
+    RecyclerView.Adapter<ListPlaylistViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BottomSheetPlaylistViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListPlaylistViewHolder {
         val binding =
-            BottomSheetItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return BottomSheetPlaylistViewHolder(binding)
+            PlaylistItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ListPlaylistViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: BottomSheetPlaylistViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ListPlaylistViewHolder, position: Int) {
         holder.bind(playlists[position])
         holder.itemView.setOnClickListener {
-            onPlaylistClick(playlists[position])
+            onTrackClick(playlists[position])
         }
     }
 

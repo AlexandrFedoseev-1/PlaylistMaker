@@ -7,12 +7,15 @@
 
     <fragment
         android:id="@+id/mediaLibFragment"
-        android:name="com.example.playlistmaker.media_lib.ui.fragments.MediaLibFragment"
+        android:name="com.example.playlistmaker.media_lib.ui.MediaLibFragment"
         android:label="fragment_media_lib"
         tools:layout="@layout/fragment_media_lib" >
         <action
             android:id="@+id/action_mediaLibFragment_to_addPlaylistFragment"
             app:destination="@id/addPlaylistFragment" />
+        <action
+            android:id="@+id/action_mediaLibFragment_to_playlistFragment"
+            app:destination="@id/playlistFragment" />
     </fragment>
     <fragment
         android:id="@+id/searchFragment"
@@ -34,7 +37,7 @@
         tools:layout="@layout/fragment_settings" />
     <fragment
         android:id="@+id/addPlaylistFragment"
-        android:name="com.example.playlistmaker.media_lib.ui.fragments.AddPlaylistFragment"
+        android:name="com.example.playlistmaker.media_lib.ui.add_playlist.AddPlaylistFragment"
         android:label="fragment_add_playlist"
         tools:layout="@layout/fragment_add_playlist" />
     <fragment
@@ -51,7 +54,7 @@
     </fragment>
     <fragment
         android:id="@+id/favoritesTracksFragment"
-        android:name="com.example.playlistmaker.media_lib.ui.fragments.FavoritesTracksFragment"
+        android:name="com.example.playlistmaker.media_lib.ui.favorites.FavoritesTracksFragment"
         android:label="fragment_favorites_tracks"
         tools:layout="@layout/fragment_favorites_tracks" >
     </fragment>
@@ -61,4 +64,32 @@
         app:popUpTo="@id/favoritesTracksFragment"
         app:popUpToSaveState="true"
         app:restoreState="true"/>
+    <fragment
+        android:id="@+id/playlistFragment"
+        android:name="com.example.playlistmaker.media_lib.ui.list_playlists.playlist.PlaylistFragment"
+        android:label="fragment_playlist"
+        tools:layout="@layout/fragment_playlist" >
+        <argument
+            android:name="playlist"
+            app:argType="com.example.playlistmaker.media_lib.domain.model.Playlist" />
+        <action
+            android:id="@+id/action_playlistFragment_to_audioPlayerFragment"
+            app:destination="@id/audioPlayerFragment" />
+        <action
+            android:id="@+id/action_playlistFragment_to_addPlaylistFragment"
+            app:destination="@id/addPlaylistFragment" />
+        <action
+            android:id="@+id/action_playlistFragment_to_editPlaylistFragment"
+            app:destination="@id/editPlaylistFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editPlaylistFragment"
+        android:name="com.example.playlistmaker.media_lib.ui.edit_playlist.EditPlaylistFragment"
+        android:label="edit_playlist"
+        tools:layout="@layout/fragment_add_playlist">
+        <argument
+            android:name="playlist"
+            app:argType="com.example.playlistmaker.media_lib.domain.model.Playlist" />
+    </fragment>
+
 </navigation>

@@ -11,7 +11,7 @@
     <string name="share_massage">https://practicum.yandex.ru/android-developer/?from=catalog</string>
     <string name="support_mail">MrHumanFed@yandex.ru</string>
     <string name="support_subject">Сообщение разработчикам приложения Playlist Maker</string>
-    <string name="support_massage">Спасибо разработчикам за крутое приложение!</string>
+    <string name="support_message">Спасибо разработчикам за крутое приложение!</string>
     <string name="user_agreement_url">https://yandex.ru/legal/practicum_offer/</string>
     <string name="placeholder_not_found">Ничего не нашлось</string>
     <string name="placeholder_error">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
@@ -36,7 +36,19 @@
     <string name="complete">Завершить</string>
     <string name="playlist_create">Создать</string>
     <string name="add_on_playlist_bottom_sheet">Добавить в плейлист</string>
-    <string name="already_add">Трек уже добавлен в плейлист </string>
-    <string name="add_track_to_playlist">Добавлено в плейлист  </string>
+    <string name="already_add">Трек уже добавлен в плейлист %s</string>
+    <string name="add_track_to_playlist">Добавлено в плейлист %s</string>
+    <string name="empty_playlist">Плейлист пуст</string>
+    <string name="all_time_and_count_playlist">%s минут • %s треков</string>
+    <string name="tracks_count_playlist">%d треков</string>
+    <string name="emptyTrackSend">В данном плейлисте нет треков для отправки</string>
+    <string name="share_playlist">Поделиться</string>
+    <string name="edit_playlist">Редактировать информацию</string>
+    <string name="delete_playlist">Удалить плейлист</string>
+    <string name="save_playlist">Сохранить</string>
+    <string name="delete_playlist_dialog_title">Удалить плейлист \"%s\"?</string>
+    <string name="delete_playlist_dialog_message">Вы уверены, что хотите удалить этот плейлист?</string>
+    <string name="delete_track_dialog_title">Удалить трек \"%s\"?</string>
+    <string name="delete_track_dialog_message">Удалить трек из плейлиста?</string>
 
 </resources>

@@ -261,5 +261,5 @@
 
     <include
         android:id="@+id/bottom_sheet_new_playlist"
-        layout="@layout/bottom_sheet_playlists" />
+        layout="@layout/bottom_sheet_list_playlists" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

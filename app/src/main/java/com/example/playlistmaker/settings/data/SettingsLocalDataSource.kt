@@ -48,7 +48,7 @@ class SettingsLocalDataSource(
             data = Uri.parse(
                 "mailto:" + context.getString(R.string.support_mail) +
                         "?&subject=" + Uri.encode(context.getString(R.string.support_subject)) +
-                        "&body=" + Uri.encode(context.getString(R.string.support_massage))
+                        "&body=" + Uri.encode(context.getString(R.string.support_message))
             )
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) // Добавляем флаг
         }
